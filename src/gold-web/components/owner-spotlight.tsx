@@ -35,9 +35,9 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
       <div aria-hidden className="pointer-events-none absolute -top-40 left-1/2 size-[70vmax] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--brand-primary)_22%,transparent),transparent_60%)]" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 lg:grid-cols-[5fr_7fr]">
         <BlurFade inView className="relative mx-auto w-full max-w-md">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[calc(var(--radius)*1.5)] border border-white/10 bg-[linear-gradient(160deg,#2a2016,#0f0b08)] shadow-[0_40px_120px_-30px_rgba(0,0,0,.8)]">
+          <div className="relative aspect-[2/3] overflow-hidden rounded-[calc(var(--radius)*1.5)] border border-white/10 bg-[linear-gradient(160deg,#2a2016,#0f0b08)] shadow-[0_40px_120px_-30px_rgba(0,0,0,.8)]">
             {o.photoUrl && photoOk
-              ? <img src={o.photoUrl} alt={o.name} className="size-full object-cover" />
+              ? <img src={o.photoUrl} alt={o.name} className="size-full object-cover object-top" />
               : <div className="grid size-full place-items-center">
                   <div className="text-center">
                     <div className="mx-auto grid size-40 place-items-center rounded-full border border-gold-hi/40 text-7xl font-extrabold gold-text">{(o.name.trim().split(" ").slice(-1)[0] || o.name)[0]}</div>
