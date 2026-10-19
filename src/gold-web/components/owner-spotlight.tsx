@@ -14,7 +14,6 @@ import { waLink } from "@/lib/utils";
 
 type Reel = { title: string; instagramUrl: string; videoUrl: string; posterUrl: string };
 
-const reelId = (url: string) => url.match(/instagram\.com\/(?:[\w.]+\/)?(?:reel|p)\/([\w-]+)/)?.[1];
 
 export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: string }) {
   const { site } = useSite();
@@ -27,6 +26,7 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
     img.onload = () => setPhotoOk(true);
     img.src = o.photoUrl;
   }, [o.photoUrl]);
+  const [playing, setPlaying] = useState<Reel | null>(null);
   if (!o.enabled || !o.name) return null;
   const wa = site.contact.whatsApp || site.contact.mobile;
 
@@ -97,9 +97,11 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
             <div><p className="eyebrow">ویدیوهای آقای {o.name.split(" ").slice(-1)[0]}</p><h3 className="mt-2 text-2xl font-light sm:text-3xl">حرف‌های رو در رو</h3></div>
           </div>
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [scrollbar-width:none]">
-            {o.reels.map((r, i) => <ReelCard key={r.title + i} r={r} photo={photoOk ? o.photoUrl : ""} />)}
+            {o.reels.map((r, i) => (
+              <ReelCard key={r.title + i} r={r} index={i} onPlay={setPlaying}
+                poster={r.posterUrl || (photoOk ? o.photoUrl : "") || site.home.hero.images?.[(i + 1) % Math.max(1, site.home.hero.images.length)] || ""} />
+            ))}
           </div>
-          <p className="mt-2 text-xs text-velvet-muted">ویدیوهای اینستاگرامی با زدن روی هر کارت بارگذاری می‌شوند. ویدیوی آپلودشده در پنل، بدون اینستاگرام هم پخش می‌شود.</p>
         </div>
       )}
 
@@ -121,30 +123,43 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
           </div>
         </div>
       )}
+      {playing && (
+        <div role="dialog" aria-modal="true" aria-label={playing.title} onClick={() => setPlaying(null)}
+          className="fixed inset-0 z-[60] grid place-items-center bg-black/85 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-sm overflow-hidden rounded-[var(--radius)] border border-gold-hi/30" onClick={(e) => e.stopPropagation()}>
+            <video src={playing.videoUrl} controls autoPlay playsInline className="aspect-[9/16] w-full bg-black object-contain" />
+            <button type="button" onClick={() => setPlaying(null)} className="absolute top-3 left-3 grid size-9 place-items-center rounded-full bg-black/60 text-white" aria-label="بستن">✕</button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
 
-function ReelCard({ r, photo }: { r: Reel; photo: string }) {
-  const [on, setOn] = useState(false);
-  const id = reelId(r.instagramUrl);
-  const poster = r.posterUrl || photo;
-  return (
-    <div className="relative aspect-[9/16] w-56 shrink-0 snap-start overflow-hidden rounded-[var(--radius)] border border-white/10 bg-[linear-gradient(160deg,#3a2c1b,#0f0b08)] sm:w-64">
-      {on && r.videoUrl ? (
-        <video src={r.videoUrl} controls autoPlay playsInline className="size-full object-cover" />
-      ) : on && id ? (
-        <iframe src={`https://www.instagram.com/reel/${id}/embed/`} title={r.title} className="size-full bg-white" loading="lazy" allow="autoplay; encrypted-media" />
-      ) : (
-        <button type="button" onClick={() => setOn(true)} className="group absolute inset-0 text-right" aria-label={`پخش: ${r.title}`}>
-          {poster && <img src={poster} alt="" className="absolute inset-0 size-full object-cover opacity-50 transition duration-700 group-hover:scale-105 group-hover:opacity-70" />}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30" />
-          <span className="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/15 backdrop-blur transition group-hover:scale-110 group-hover:bg-gold-hi/80">
-            <Play className="size-7 translate-x-0.5 fill-white text-white" />
-          </span>
-          <span className="absolute inset-x-0 bottom-0 p-4 text-sm font-semibold leading-7 text-white">{r.title}</span>
-        </button>
-      )}
-    </div>
+/**
+ * Themed video card. An uploaded MP4 plays in a lightbox on the page; an Instagram reel opens on Instagram
+ * (embedding Instagram's own player clashes with the design and is filtered in Iran anyway).
+ */
+function ReelCard({ r, index, poster, onPlay }: { r: Reel; index: number; poster: string; onPlay: (r: Reel) => void }) {
+  const native = !!r.videoUrl;
+  const body = (
+    <>
+      {poster && <img src={poster} alt="" loading="lazy" className="absolute inset-0 size-full object-cover opacity-55 transition duration-[1.2s] group-hover:scale-110 group-hover:opacity-75" />}
+      <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--velvet)_8%,color-mix(in_srgb,var(--velvet)_55%,transparent)_45%,color-mix(in_srgb,var(--velvet)_30%,transparent))]" />
+      <span className="num absolute top-4 right-4 text-xs tracking-[.3em] text-gold-hi/80">{String(index + 1).padStart(2, "0")}</span>
+      <span className="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-gold-hi/60 bg-black/30 backdrop-blur transition duration-500 group-hover:scale-110 group-hover:bg-gold-hi">
+        <Play className="size-6 translate-x-0.5 fill-gold-hi text-gold-hi transition-colors group-hover:fill-black group-hover:text-black" />
+      </span>
+      <span className="absolute inset-x-0 bottom-0 space-y-2 p-5">
+        <span className="block text-base font-semibold leading-7 text-velvet-foreground">{r.title}</span>
+        <span className="block text-xs text-gold-hi/90">{native ? "پخش ویدیو" : "تماشا در اینستاگرام ↗"}</span>
+      </span>
+    </>
   );
+  const cls = "group relative block aspect-[9/16] w-52 shrink-0 snap-start overflow-hidden rounded-[var(--radius)] border border-white/10 bg-velvet text-right transition-colors duration-500 hover:border-gold-hi/60 sm:w-60";
+  return native ? (
+    <button type="button" onClick={() => onPlay(r)} className={cls} aria-label={`پخش: ${r.title}`}>{body}</button>
+  ) : r.instagramUrl ? (
+    <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className={cls} aria-label={`${r.title} در اینستاگرام`}>{body}</a>
+  ) : null;
 }
