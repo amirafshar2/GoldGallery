@@ -23,6 +23,15 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
     .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"));
 
 // ---------- fail-fast configuration checks ----------
+// Showcase (public demo) only: if the host did not provide secrets, generate random ones for this process.
+// Nothing real is protected there (sample data, sandbox payments); after a restart everyone simply logs in again.
+// Real installs (Production) still fail fast without explicit keys.
+if (builder.Configuration.GetValue<bool>("Showcase:Enabled"))
+{
+    static string Random64() => Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(48));
+    if ((builder.Configuration["Jwt:Key"] ?? "").Length < 32) builder.Configuration["Jwt:Key"] = Random64();
+    if ((builder.Configuration["Security:HashKey"] ?? "").Length < 32) builder.Configuration["Security:HashKey"] = Random64();
+}
 var jwt = builder.Configuration.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
 if (string.IsNullOrWhiteSpace(jwt.Key) || jwt.Key.Length < 32)
     throw new InvalidOperationException("Jwt:Key is missing or shorter than 32 chars (set via User Secrets / env var Jwt__Key).");

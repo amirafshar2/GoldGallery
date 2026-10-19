@@ -1,112 +1,128 @@
-<div dir="rtl">
+# Goldgalerie – White-Label-Onlineshop für Goldschmuck
 
-# گالری و کارگاه طلا — قالب فروشگاه آنلاین طلا (White-label)
+> 🤖 **Dieses Projekt ist durch Vibe Coding mit Claude (KI von Anthropic) entstanden.**
+> Idee, Entscheidungen und Designrichtung stammen von Amir; Code, Design, Tests und Dokumentation sind im Dialog mit Claude entstanden.
 
-> 🤖 **این پروژه با وایب‌کدینگ (Vibe Coding) و با کمک Claude (هوش مصنوعی Anthropic) ساخته شده است.**
-> ایده، تصمیم‌ها و جهت طراحی از امیر؛ نوشتن کد، طراحی، تست و مستندسازی با Claude در گفت‌وگو.
+Ein Onlineshop für Goldschmuck mit Live-Preisen, wie er im Iran üblich ist: Der Preis jedes Stücks wird aus **Tageskurs × tatsächlichem Gewicht × Feingehalt + Arbeitslohn + Gewinn + Steuer** berechnet. Alle Texte, Farben, das Logo und die Seiten lassen sich im Admin-Bereich ändern. Zusätzlich gibt es eine leere Installation, mit der ein neuer Kunde seine eigene Website über einen 9-Schritte-Assistenten aufbaut.
 
-فروشگاه آنلاین طلا با قیمت لحظه‌ای: قیمت هر قطعه از **نرخ روز × وزن واقعی × عیار + اجرت + سود + مالیات** ساخته می‌شود. همه‌ی متن‌ها، رنگ‌ها، لوگو و صفحه‌ها از پنل مدیریت قابل تغییرند. یک نصب خالی هم دارد که مشتری جدید با دستیار ۹ قدمی، سایت خودش را می‌سازد.
+Die Oberfläche der Website selbst ist auf Persisch (von rechts nach links), weil sie für den iranischen Markt gedacht ist.
 
-> نقشه‌ی کامل پروژه: `docs/PROJECT_MAP.html` (در مرورگر باز کن) — استانداردها و اسکیل‌ها: `docs/SKILLS.md` — کامپوننت‌های 21st: `docs/21st-components.md`
+> Vollständige Projektkarte: `docs/PROJECT_MAP.html` (im Browser öffnen) · Standards und Skills: `docs/SKILLS.md` · Komponenten von 21st.dev: `docs/21st-components.md`
 
-## تصاویر سایت
+## Screenshots
 
-**صفحه‌ی اول — هیرو با زوم عکس هنگام اسکرول (بدون ویدیو)**
-![هیرو](docs/screenshots/01-hero.jpg)
+**Startseite – Hero mit Bild-Zoom beim Scrollen (kein Video)**
+![Hero](docs/screenshots/01-hero.jpg)
 
-| زوم عکس‌ها با اسکرول | نرخ زنده‌ی طلا + دسته‌بندی‌ها |
+| Bild-Zoom beim Scrollen | Live-Goldkurs + Kategorien |
 |---|---|
-| ![زوم](docs/screenshots/02-hero-zoom.jpg) | ![نرخ و دسته‌ها](docs/screenshots/03-rate-categories.jpg) |
+| ![Zoom](docs/screenshots/02-hero-zoom.jpg) | ![Kurs und Kategorien](docs/screenshots/03-rate-categories.jpg) |
 
-| جدیدترین محصولات | کلکسیون منتخب (اسکرول افقی) |
+| Neueste Produkte | Ausgewählte Kollektion (horizontales Scrollen) |
 |---|---|
-| ![محصولات](docs/screenshots/04-products.jpg) | ![گالری](docs/screenshots/05-gallery.jpg) |
+| ![Produkte](docs/screenshots/04-products.jpg) | ![Galerie](docs/screenshots/05-gallery.jpg) |
 
-| داستان برند | صفحه‌ی محصول (ذره‌بین روی عکس 4K + جدول قطعه‌ها) |
+| Markengeschichte | Produktseite (Lupe auf 4K-Foto + Tabelle der Einzelstücke) |
 |---|---|
-| ![داستان](docs/screenshots/06-story.jpg) | ![محصول](docs/screenshots/07-product-lens.jpg) |
+| ![Geschichte](docs/screenshots/06-story.jpg) | ![Produkt](docs/screenshots/07-product-lens.jpg) |
 
-| فروشگاه با فیلتر | ورود با ۴ دکمه‌ی دمو |
+| Shop mit Filtern | Login mit 4 Demo-Buttons |
 |---|---|
-| ![فروشگاه](docs/screenshots/08-shop.jpg) | ![ورود](docs/screenshots/09-login-demo.jpg) |
+| ![Shop](docs/screenshots/08-shop.jpg) | ![Login](docs/screenshots/09-login-demo.jpg) |
 
-| پنل مدیریت + دستیار راه‌اندازی | موبایل |
+| Admin-Bereich + Einrichtungsassistent | Mobilansicht |
 |---|---|
-| ![پنل](docs/screenshots/10-admin.jpg) | <img src="docs/screenshots/11-mobile-hero.jpg" width="48%"> <img src="docs/screenshots/12-mobile-products.jpg" width="48%"> |
+| ![Admin](docs/screenshots/10-admin.jpg) | <img src="docs/screenshots/11-mobile-hero.jpg" width="48%"> <img src="docs/screenshots/12-mobile-products.jpg" width="48%"> |
 
-## فناوری‌ها
-- **بک‌اند:** .NET 10، Clean Architecture، EF Core (SQLite برای اجرای لوکال / SQL Server برای سرور)، JWT + Refresh Cookie، SignalR برای نرخ زنده
-- **فرانت:** Next.js 16 + Tailwind 4، فارسی و راست‌به‌چپ، موشن‌ها از **21st.dev** (Magic UI) با framer-motion
-- **عکس‌ها:** ساخته‌شده با **Canva AI**، خروجی 3840 پیکسل (4K)
-- **تست:** ۵۲ تست سرور (xUnit) + تست تصویری کامل با Playwright روی دسکتاپ و موبایل
+## Funktionen
 
-## اجرا در Visual Studio (پیشنهادی)
-پیش‌نیاز: **Visual Studio 2026** (برای `net10.0` لازم است) با workload **ASP.NET and web development**، به‌علاوه‌ی **Node.js 22** (از nodejs.org).
+- **Live-Goldkurs** über SignalR; alle Preise werden serverseitig neu berechnet (Geld als Ganzzahl in Rial, Gewicht in Milligramm, Prozente in Basispunkten).
+- **Preissperre** im Warenkorb für 10 Minuten; der Online-Verkauf stoppt automatisch bei veraltetem Kurs oder großem Kurssprung.
+- **Einzelstücke statt Varianten:** Jedes Schmuckstück hat sein eigenes Gewicht, seine Größe und seine Filiale.
+- **White-Label:** Name, Logo, Farben, Startseiten-Blöcke, alle Texte, Kontakt, SEO – alles im Admin-Bereich.
+- **Ratenkauf-Rechner** (Anzahlung in %, Anzahl der Monatsraten, Obergrenze, optionale Gebühr – im Admin einstellbar).
+- **„Inhaber im Mittelpunkt“-Bereich:** Foto, Zitat, kurze Videos (MP4-Upload oder Instagram-Reel) und Kauftipps.
+- **WhatsApp-Bestellung:** schwebender Button und „Per WhatsApp bestellen“ auf jeder Produktseite.
+- **Rollen:** Kunde, Großhändler, Mitarbeiter, Admin – mit Demo-Login per Klick.
 
-1. `GoldGallery.sln` را باز کن.
-2. بالای صفحه، کنار دکمه‌ی ▶، از لیست پروفایل‌ها **«سایت + API (دمو)»** را انتخاب کن.
-3. **F5** بزن. پروژه‌ی `Gold.Api` خودش سایت را با `npm run dev` روشن می‌کند (روش رسمی مایکروسافت، SpaProxy). اول صفحه‌ی «Launching the SPA proxy…» می‌آید و وقتی سایت آماده شد خودکار به `http://localhost:3000` می‌رود.
-   - بار اول `npm install` خودکار اجرا می‌شود (۱ تا ۳ دقیقه؛ در پنجره‌ی «Ausgabe → Build» دیده می‌شود).
-   - اگر Node.js نصب نباشد، Build با پیام روشن متوقف می‌شود.
-   - اگر فایل دیتابیس قدیمی باشد، خودکار با داده‌ی نمونه‌ی تازه ساخته می‌شود.
-4. در صفحه‌ی ورود، ۴ دکمه‌ی ورود سریع (مشتری، همکار عمده، کارمند، ادمین) هست.
+## Technologien
 
-پروفایل‌های دیگر:
-- **«سایت + API (نصب خالی برای مشتری جدید)»** ← `/setup` با کد `LOCAL-setup-code-123456`
-- **«فقط API + Swagger»**
+- **Backend:** .NET 10, Clean Architecture, EF Core (SQLite lokal / SQL Server auf dem Server), JWT + Refresh-Cookie, SignalR für den Live-Kurs
+- **Frontend:** Next.js 16 + Tailwind 4, Animationen von **21st.dev** (Magic UI) mit framer-motion
+- **Bilder:** mit **Canva AI** erstellt, Export in 3840 Pixel (4K)
+- **Tests:** 56 Servertests (xUnit) + vollständiger visueller Test mit Playwright auf Desktop und Mobilgerät
 
-تست‌ها: منوی **Test → Run All Tests** (۵۶ تست).
-دیتابیس SQLite به‌صورت خودکار در `src/Gold.Api/gold.db` ساخته می‌شود؛ برای شروع از صفر، این فایل را پاک کن.
+## Start in Visual Studio (empfohlen)
 
-## اجرا روی ویندوز بدون Visual Studio
-پیش‌نیاز: **.NET SDK 10** و **Node.js 22**
+Voraussetzungen: **Visual Studio 2026** (für `net10.0` erforderlich) mit dem Workload **ASP.NET and web development** sowie **Node.js 22** (von nodejs.org).
 
-| کار | دستور |
+1. `GoldGallery.sln` öffnen.
+2. Oben neben dem ▶-Button das Startprofil wählen (die Profilnamen sind auf Persisch):
+   - **„سایت + API (دمو)“** – Demo mit Beispieldaten
+   - **„سایت + API (نصب خالی برای مشتری جدید)“** – leere Installation für einen neuen Kunden → `/setup` mit dem Code `LOCAL-setup-code-123456`
+   - **„فقط API + Swagger“** – nur die API mit Swagger
+3. **F5** drücken. Das Projekt `Gold.Api` startet die Website automatisch mit `npm run dev` (offizieller Microsoft-Weg, SpaProxy). Zuerst erscheint „Launching the SPA proxy…“, danach öffnet sich `http://localhost:3000`.
+   - Beim ersten Start läuft `npm install` automatisch (1–3 Minuten; sichtbar unter „Ausgabe → Build“).
+   - Ist Node.js nicht installiert, bricht der Build mit einer klaren Meldung ab.
+   - Ist die Datenbankdatei veraltet, wird sie automatisch mit frischen Beispieldaten neu erstellt.
+4. Auf der Login-Seite gibt es 4 Schnell-Login-Buttons (Kunde, Großhändler, Mitarbeiter, Admin).
+
+Tests: Menü **Test → Alle Tests ausführen** (56 Tests).
+Die SQLite-Datenbank wird automatisch unter `src/Gold.Api/gold.db` angelegt; zum Neustart von null einfach diese Datei löschen.
+
+## Start unter Windows ohne Visual Studio
+
+Voraussetzungen: **.NET SDK 10** und **Node.js 22**
+
+| Aufgabe | Befehl |
 |---|---|
-| اجرای نسخه‌ی دمو (با داده‌ی نمونه + ۴ دکمه‌ی ورود سریع) | دوبار کلیک روی `start-dev.cmd` |
-| اجرای نسخه‌ی خالی (چیزی که مشتری جدید می‌گیرد) | دوبار کلیک روی `start-empty.cmd` ← بعد `http://localhost:3000/setup` با کد `LOCAL-setup-code-123456` |
-| تست‌های سرور (۵۶ تست) | `dotnet test` |
-| تست تصویری CRUD کل سایت (لینوکس/WSL/Git-Bash) | `bash tests/e2e/run-visual.sh` ← عکس‌ها در `tests/e2e/screenshots` |
+| Demo starten (Beispieldaten + 4 Schnell-Login-Buttons) | Doppelklick auf `start-dev.cmd` |
+| Leere Installation starten (was ein neuer Kunde bekommt) | Doppelklick auf `start-empty.cmd` → danach `http://localhost:3000/setup` mit dem Code `LOCAL-setup-code-123456` |
+| Servertests (56 Tests) | `dotnet test` |
+| Visueller CRUD-Test der ganzen Website (Linux/WSL/Git-Bash) | `bash tests/e2e/run-visual.sh` → Bilder unter `tests/e2e/screenshots` |
 
-## حالت Showcase (انتشار عمومی دمو)
-- ۴ دکمه‌ی ورود سریع فعال است، تا بازدیدکننده خودش پنل مدیریت را امتحان کند.
-- پرداخت فقط آزمایشی است و هیچ پول واقعی جابه‌جا نمی‌شود.
-- نوار «نسخه‌ی نمایشی» بالای سایت نشان داده می‌شود.
-- گوگل سایت را ایندکس نمی‌کند (noindex).
-- داده‌ها هر ۶ ساعت به حالت اول برمی‌گردند (`Showcase:ResetHours`).
-- کد ورود پیامکی هیچ‌جا نمایش داده نمی‌شود.
+## Showcase-Modus (öffentliche Demo)
 
-داده‌ی نمونه دو پروفایل دارد: `Seed:Profile=Generic` (فروشگاه نمونه) و یک پروفایل اختصاصی.
+- Die 4 Schnell-Login-Buttons sind aktiv, damit Besucher den Admin-Bereich selbst ausprobieren können.
+- Zahlungen laufen nur über ein Test-Gateway; es wird kein echtes Geld bewegt.
+- Oben auf der Seite erscheint ein Hinweisband „Demoversion“.
+- Suchmaschinen indexieren die Seite nicht (`noindex`).
+- Die Daten werden alle 6 Stunden zurückgesetzt (`Showcase:ResetHours`).
+- SMS-Login-Codes werden nirgends angezeigt.
 
-### انتشار روی Render (یک کانتینر: API + سایت)
-1. پروژه را در یک ریپوی **خصوصی** گیت‌هاب بگذار.
-2. در Render: **New → Blueprint** و همین ریپو را انتخاب کن. فایل `render.yaml` خودش سرویس `gold-showcase` را در فرانکفورت می‌سازد و کلیدهای امنیتی را تصادفی تولید می‌کند. هیچ کلیدی داخل کد نیست.
-3. بعد از چند دقیقه، لینک `https://gold-showcase.onrender.com` آماده است.
+Für die Beispieldaten gibt es zwei Profile: `Seed:Profile=Generic` (Beispielshop) und ein eigenes Profil.
 
-| متغیر | مقدار |
+### Veröffentlichung auf Render (ein Container: API + Website)
+
+1. Das Projekt in ein **privates** GitHub-Repository legen.
+2. In Render: **New → Blueprint** und dieses Repository wählen. Die Datei `render.yaml` legt den Dienst `gold-showcase` in Frankfurt an und erzeugt die Sicherheitsschlüssel zufällig. Im Code steht kein einziger Schlüssel.
+3. Nach einigen Minuten ist der Link `https://gold-showcase.onrender.com` erreichbar.
+
+| Variable | Wert |
 |---|---|
 | `ASPNETCORE_ENVIRONMENT` | `Showcase` |
-| `Seed__Profile` | `Generic` یا پروفایل اختصاصی |
-| `Jwt__Key`, `Security__HashKey` | خودکار در Render |
+| `Seed__Profile` | `Generic` oder das eigene Profil |
+| `Jwt__Key`, `Security__HashKey` | werden von Render automatisch erzeugt |
 
-> پلن رایگان Render بعد از ۱۵ دقیقه بی‌کاری می‌خوابد و اولین بازدید حدود ۵۰ ثانیه طول می‌کشد. قبل از جلسه‌ی ارائه یک‌بار لینک را باز کن.
+> Der kostenlose Render-Tarif legt den Dienst nach 15 Minuten Inaktivität schlafen; der erste Aufruf dauert dann etwa 50 Sekunden. Vor einer Präsentation den Link also einmal vorher öffnen.
 
-## تحویل به یک مشتری جدید (بدون هیچ داده‌ای)
-تنظیمات سرور مشتری (متغیر محیطی، نه داخل کد):
+## Übergabe an einen neuen Kunden (ohne Daten)
+
+Servereinstellungen des Kunden (als Umgebungsvariablen, nicht im Code):
+
 ```
 ASPNETCORE_ENVIRONMENT=Production
 Seed__Mode=Empty
-Setup__Token=<یک کد تصادفی طولانی برای همین مشتری>
-Jwt__Key=<حداقل ۳۲ کاراکتر تصادفی>
-Security__HashKey=<حداقل ۳۲ کاراکتر تصادفی>
+Setup__Token=<langer Zufallscode nur für diesen Kunden>
+Jwt__Key=<mindestens 32 zufällige Zeichen>
+Security__HashKey=<mindestens 32 zufällige Zeichen>
 Database__Provider=SqlServer
-ConnectionStrings__Default=<رشته‌ی اتصال>
-DemoLogin__Enabled=false        ← در Production اگر true باشد برنامه اصلاً اجرا نمی‌شود
+ConnectionStrings__Default=<Verbindungszeichenfolge>
+DemoLogin__Enabled=false        ← ist das in Production true, startet die Anwendung gar nicht
 ```
-مشتری `/setup` را باز می‌کند، با کد نصب حساب مدیر می‌سازد، وارد پنل می‌شود و **دستیار راه‌اندازی** ۹ قدم را با او جلو می‌برد.
+
+Der Kunde öffnet `/setup`, legt mit dem Installationscode sein Admin-Konto an, meldet sich im Admin-Bereich an, und der **Einrichtungsassistent** führt ihn durch 9 Schritte.
 
 ---
 
-<sub>ساخته‌شده با وایب‌کدینگ و Claude — طراحی «عاج و مخمل»، عکس‌ها از Canva، موشن‌ها از 21st.dev.</sub>
-
-</div>
+<sub>Mit Vibe Coding und Claude entstanden – Design „Elfenbein & Samt“, Bilder von Canva, Animationen von 21st.dev.</sub>

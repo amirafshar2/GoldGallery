@@ -53,3 +53,18 @@ public class ShowcaseProductionTests
         Assert.Equal(HttpStatusCode.OK, r.StatusCode);
     }
 }
+
+public class ShowcaseWithoutSecretsTests
+{
+    [Fact]
+    public async Task Showcase_StartsWithoutKeys_ProductionDoesNot()
+    {
+        using var demo = new TestApp(new() { ["Environment"] = "Production", ["Showcase:Enabled"] = "true", ["DemoLogin:Enabled"] = "true", ["Jwt:Key"] = "", ["Security:HashKey"] = "" });
+        Assert.Equal(HttpStatusCode.OK, (await demo.Client().GetAsync("/health/live")).StatusCode);
+        var admin = await demo.DemoAsync("admin");
+        Assert.Equal(HttpStatusCode.OK, (await admin.GetAsync("/api/v1/admin/onboarding")).StatusCode);
+
+        using var prod = new TestApp(new() { ["Environment"] = "Production", ["Jwt:Key"] = "" });
+        Assert.ThrowsAny<Exception>(() => prod.Client());
+    }
+}
