@@ -1,0 +1,13 @@
+**/bin
+**/obj
+**/node_modules
+**/.next
+**/.next-empty
+**/*.db
+**/*.db-shm
+**/*.db-wal
+tests
+docs
+.git
+.vs
+_sync

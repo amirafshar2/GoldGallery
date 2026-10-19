@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.6887863">
+  <!-- Visual Studio project for the Next.js website. F5 runs "npm run dev" (http://localhost:3000). -->
+  <PropertyGroup>
+    <StartupCommand>npm run dev</StartupCommand>
+    <!-- Don't run "next build" on every Visual Studio build (slow); dev server compiles on demand. -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\.next</BuildOutputFolder>
+  </PropertyGroup>
+</Project>

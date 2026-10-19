@@ -1,0 +1,47 @@
+{
+  "profiles": {
+    "سایت + API (دموی گالری مروجی)": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy",
+        "Seed__Profile": "Moraveji",
+        "Showcase__Enabled": "true",
+        "ConnectionStrings__Default": "Data Source=gold-moraveji.db"
+      }
+    },
+    "سایت + API (دمو)": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
+      }
+    },
+    "سایت + API (نصب خالی برای مشتری جدید)": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy",
+        "Seed__Mode": "Empty",
+        "ConnectionStrings__Default": "Data Source=gold-empty.db",
+        "Setup__Token": "LOCAL-setup-code-123456",
+        "DemoLogin__Enabled": "false"
+      }
+    },
+    "فقط API + Swagger": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

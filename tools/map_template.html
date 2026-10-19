@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نقشه‌ی پروژه طلا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0B0A08;--panel:#15130f;--line:#2a261e;--text:#F4EFE6;--muted:#b8ad99;--gold:#C9A24A;--gold2:#e8c877;--ok:#7fbf7f;}
+  :root[data-theme="light"]{--bg:#F4EFE6;--panel:#fffaf1;--line:#e3d8c3;--text:#1b1813;--muted:#6b604c;--gold:#9a7424;--gold2:#7a5a14;--ok:#2f7d32;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,system-ui,sans-serif;line-height:1.85}
+  header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+  header h1{margin:0;font-size:18px;color:var(--gold2)}
+  header button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-family:inherit;cursor:pointer}
+  .wrap{display:grid;grid-template-columns:240px 1fr;gap:24px;max-width:1280px;margin:0 auto;padding:24px 16px}
+  nav{position:sticky;top:72px;align-self:start;font-size:14px}
+  nav a{display:block;color:var(--muted);text-decoration:none;padding:4px 10px;border-right:2px solid var(--line)}
+  nav a:hover{color:var(--gold2);border-color:var(--gold)}
+  main{min-width:0}
+  h1,h2,h3{line-height:1.4}
+  main h1{font-size:28px;color:var(--gold2);margin-top:0}
+  main h2{font-size:21px;margin-top:40px;padding-top:12px;border-top:1px solid var(--line);color:var(--gold2)}
+  blockquote{margin:12px 0;padding:10px 16px;background:var(--panel);border-right:3px solid var(--gold);border-radius:8px;color:var(--muted)}
+  code{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 6px;direction:ltr;unicode-bidi:embed;font-size:.9em}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;direction:ltr;text-align:left}
+  pre code{border:0;padding:0;background:none}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;display:block;overflow-x:auto}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;vertical-align:top}
+  th{background:var(--panel);color:var(--gold2)}
+  .mermaid{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;overflow:auto;text-align:center;direction:ltr}
+  a{color:var(--gold2)}
+  @media (max-width:860px){.wrap{grid-template-columns:1fr}nav{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗺️ نقشه‌ی پروژه — گالری و کارگاه طلا</h1>
+  <button id="theme" type="button">روشن / تاریک</button>
+</header>
+<div class="wrap">
+  <nav id="toc"></nav>
+  <main id="content">در حال بارگذاری…</main>
+</div>
+<script type="text/markdown" id="src">{{MARKDOWN}}</script>
+<script>{{MARKED}}</script>
+<script>{{MERMAID}}</script>
+<script>
+(function(){
+  const raw = document.getElementById('src').textContent
+    .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#x27;/g,"'").replace(/&amp;/g,'&');
+  const renderer = new marked.Renderer();
+  const baseCode = renderer.code.bind(renderer);
+  renderer.code = function(code, lang){
+    const text = typeof code === 'object' ? code.text : code;
+    const l = typeof code === 'object' ? code.lang : lang;
+    if (l === 'mermaid') return '<div class="mermaid">' + text.replace(/</g,'&lt;') + '</div>';
+    return baseCode(code, lang);
+  };
+  const el = document.getElementById('content');
+  el.innerHTML = marked.parse(raw, {renderer});
+  const toc = document.getElementById('toc');
+  el.querySelectorAll('h2').forEach((h,i)=>{ h.id='s'+i; const a=document.createElement('a'); a.href='#s'+i; a.textContent=h.textContent; toc.appendChild(a); });
+  function draw(){
+    const dark = document.documentElement.dataset.theme !== 'light';
+    el.querySelectorAll('.mermaid').forEach(d=>{ if(!d.dataset.src) d.dataset.src=d.textContent; d.removeAttribute('data-processed'); d.innerHTML=d.dataset.src; });
+    mermaid.initialize({startOnLoad:false, theme: dark?'dark':'neutral', themeVariables: dark?{primaryColor:'#2a2418',primaryBorderColor:'#C9A24A',primaryTextColor:'#F4EFE6',lineColor:'#C9A24A'}:{}, securityLevel:'strict'});
+    mermaid.run({querySelector:'.mermaid'});
+  }
+  try{ const t=localStorage.getItem('map-theme'); if(t) document.documentElement.dataset.theme=t; }catch(e){}
+  document.getElementById('theme').onclick=()=>{
+    const cur=document.documentElement.dataset.theme==='light'?'light':'dark';
+    const next=cur==='dark'?'light':'dark'; document.documentElement.dataset.theme=next;
+    try{localStorage.setItem('map-theme',next)}catch(e){}
+    draw();
+  };
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+bin/
+obj/
+.vs/
+*.user
+node_modules/
+.next/
+.env
+.env.local
+appsettings.*.local.json
+TestResults/
+.sync/
+*.db
+*.db-shm
+*.db-wal
+App_Data/
+_private/
+_sync/

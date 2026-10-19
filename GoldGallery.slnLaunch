@@ -1,0 +1,42 @@
+[
+  {
+    "Name": "سایت + API (دموی گالری مروجی)",
+    "Projects": [
+      {
+        "Path": "src\\Gold.Api\\Gold.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "سایت + API (دموی گالری مروجی)"
+      }
+    ]
+  },
+  {
+    "Name": "سایت + API (دمو)",
+    "Projects": [
+      {
+        "Path": "src\\Gold.Api\\Gold.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "سایت + API (دمو)"
+      }
+    ]
+  },
+  {
+    "Name": "سایت + API (نصب خالی برای مشتری جدید)",
+    "Projects": [
+      {
+        "Path": "src\\Gold.Api\\Gold.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "سایت + API (نصب خالی برای مشتری جدید)"
+      }
+    ]
+  },
+  {
+    "Name": "فقط API + Swagger",
+    "Projects": [
+      {
+        "Path": "src\\Gold.Api\\Gold.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "فقط API + Swagger"
+      }
+    ]
+  }
+]
