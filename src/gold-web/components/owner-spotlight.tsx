@@ -99,7 +99,7 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [scrollbar-width:none]">
             {o.reels.map((r, i) => (
               <ReelCard key={r.title + i} r={r} index={i} onPlay={setPlaying}
-                poster={r.posterUrl || (photoOk ? o.photoUrl : "") || site.home.hero.images?.[(i + 1) % Math.max(1, site.home.hero.images.length)] || ""} />
+                poster={r.posterUrl || site.home.hero.images?.[(i + 1) % Math.max(1, site.home.hero.images.length)] || (photoOk ? o.photoUrl : "")} />
             ))}
           </div>
         </div>
