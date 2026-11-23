@@ -98,7 +98,7 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
                     .Select(z => new { z.Id, Branch = z.Branch!.Name, z.GoldWeightMg, z.KaratPerMille, z.Size, z.Status, z.StoneValueRial })
                     .ToList(),
             }).FirstOrDefaultAsync(ct);
-        if (p is null) return Error.NotFound("product.notFound", "محصول پیدا نشد.");
+        if (p is null) return Error.NotFound("product.notFound", "Produkt nicht gefunden.");
 
         var (rate, prev) = await rates.GetLatestTwoAsync(ct);
         var policy = await rates.GetPolicyAsync(ct);
@@ -123,7 +123,7 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
 
     public async Task<Result<CategoryDto>> CreateCategoryAsync(UpsertCategoryRequest r, CancellationToken ct)
     {
-        if (await db.Categories.AnyAsync(c => c.Slug == r.Slug, ct)) return Error.Conflict("category.slug", "این نامک قبلاً استفاده شده است.");
+        if (await db.Categories.AnyAsync(c => c.Slug == r.Slug, ct)) return Error.Conflict("category.slug", "Dieser URL-Name wird bereits verwendet.");
         var c = Category.Create(r.Slug, r.Name, r.SortOrder);
         db.Categories.Add(c);
         Audit("category.create", "Category", c.Id, r.Name);
@@ -134,7 +134,7 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
     public async Task<Result<CategoryDto>> UpdateCategoryAsync(Guid id, UpsertCategoryRequest r, CancellationToken ct)
     {
         var c = await db.Categories.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (c is null) return Error.NotFound("category.notFound", "دسته پیدا نشد.");
+        if (c is null) return Error.NotFound("category.notFound", "Kategorie nicht gefunden.");
         c.Update(r.Name, r.SortOrder);
         Audit("category.update", "Category", c.Id, r.Name);
         await db.SaveChangesAsync(ct);
@@ -144,9 +144,9 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
     public async Task<Result<Unit>> DeleteCategoryAsync(Guid id, CancellationToken ct)
     {
         var c = await db.Categories.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (c is null) return Error.NotFound("category.notFound", "دسته پیدا نشد.");
+        if (c is null) return Error.NotFound("category.notFound", "Kategorie nicht gefunden.");
         if (await db.Products.AnyAsync(p => p.CategoryId == id, ct))
-            return Error.Conflict("category.inUse", "این دسته محصول دارد و حذف نمی‌شود.");
+            return Error.Conflict("category.inUse", "Diese Kategorie enthält Produkte und kann nicht gelöscht werden.");
         c.SoftDelete();
         Audit("category.delete", "Category", c.Id, c.Name);
         await db.SaveChangesAsync(ct);
@@ -164,9 +164,9 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
 
     public async Task<Result<Guid>> CreateProductAsync(UpsertProductRequest r, CancellationToken ct)
     {
-        if (!await db.Categories.AnyAsync(c => c.Id == r.CategoryId, ct)) return Error.Validation("product.category", "دسته معتبر نیست.");
+        if (!await db.Categories.AnyAsync(c => c.Id == r.CategoryId, ct)) return Error.Validation("product.category", "Ungültige Kategorie.");
         if (await db.Products.IgnoreQueryFilters().AnyAsync(p => p.Slug == r.Slug.ToLower(), ct))
-            return Error.Conflict("product.slug", "این نامک قبلاً استفاده شده است.");
+            return Error.Conflict("product.slug", "Dieser URL-Name wird bereits verwendet.");
         try
         {
             var p = Product.Create(r.Slug, r.Name, r.CategoryId, r.Audience, r.Color, ToWage(r.WageKind, r.WageValue),
@@ -182,8 +182,8 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
     public async Task<Result<Unit>> UpdateProductAsync(Guid id, UpsertProductRequest r, CancellationToken ct)
     {
         var p = await db.Products.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (p is null) return Error.NotFound("product.notFound", "محصول پیدا نشد.");
-        if (!await db.Categories.AnyAsync(c => c.Id == r.CategoryId, ct)) return Error.Validation("product.category", "دسته معتبر نیست.");
+        if (p is null) return Error.NotFound("product.notFound", "Produkt nicht gefunden.");
+        if (!await db.Categories.AnyAsync(c => c.Id == r.CategoryId, ct)) return Error.Validation("product.category", "Ungültige Kategorie.");
         try
         {
             p.Update(r.Name, r.Description, r.Audience, r.Color, ToWage(r.WageKind, r.WageValue), r.ImageUrl, r.IsFeatured);
@@ -198,9 +198,9 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
     public async Task<Result<Unit>> DeleteProductAsync(Guid id, CancellationToken ct)
     {
         var p = await db.Products.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (p is null) return Error.NotFound("product.notFound", "محصول پیدا نشد.");
+        if (p is null) return Error.NotFound("product.notFound", "Produkt nicht gefunden.");
         if (await db.Pieces.AnyAsync(x => x.ProductId == id && x.Status != PieceStatus.Available, ct))
-            return Error.Conflict("product.hasActivePieces", "این محصول قطعه‌ی رزرو یا فروخته‌شده دارد.");
+            return Error.Conflict("product.hasActivePieces", "Dieses Produkt hat reservierte oder verkaufte Stücke.");
         p.SoftDelete();
         foreach (var piece in await db.Pieces.Where(x => x.ProductId == id).ToListAsync(ct)) piece.SoftDelete();
         Audit("product.delete", "Product", p.Id, p.Name);
@@ -213,7 +213,7 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
         var p = await db.Products.AsNoTracking().Where(x => x.Id == id)
             .Select(x => new ProductAdminDto(x.Id, x.Slug, x.Name, x.Description, x.CategoryId, x.Audience, x.Color, x.WageKind, x.WageValue, x.ImageUrl, x.IsFeatured))
             .FirstOrDefaultAsync(ct);
-        return p is null ? Error.NotFound("product.notFound", "محصول پیدا نشد.") : p;
+        return p is null ? Error.NotFound("product.notFound", "Produkt nicht gefunden.") : p;
     }
 
     public Task<List<PieceAdminDto>> GetPiecesAsync(Guid? productId, CancellationToken ct) =>
@@ -226,9 +226,9 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
 
     public async Task<Result<Guid>> CreatePieceAsync(UpsertPieceRequest r, CancellationToken ct)
     {
-        if (!await db.Products.AnyAsync(p => p.Id == r.ProductId, ct)) return Error.Validation("piece.product", "محصول معتبر نیست.");
-        if (!await db.Branches.AnyAsync(b => b.Id == r.BranchId, ct)) return Error.Validation("piece.branch", "شعبه معتبر نیست.");
-        if (await db.Pieces.IgnoreQueryFilters().AnyAsync(p => p.Barcode == r.Barcode, ct)) return Error.Conflict("piece.barcode", "این بارکد تکراری است.");
+        if (!await db.Products.AnyAsync(p => p.Id == r.ProductId, ct)) return Error.Validation("piece.product", "Ungültiges Produkt.");
+        if (!await db.Branches.AnyAsync(b => b.Id == r.BranchId, ct)) return Error.Validation("piece.branch", "Ungültige Filiale.");
+        if (await db.Pieces.IgnoreQueryFilters().AnyAsync(p => p.Barcode == r.Barcode, ct)) return Error.Conflict("piece.barcode", "Dieser Barcode ist bereits vergeben.");
         try
         {
             var piece = Piece.Create(r.ProductId, r.BranchId, r.Barcode, Weight.FromGrams(r.GoldGrams), Karat.FromPerMille(r.Karat),
@@ -244,7 +244,7 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
     public async Task<Result<Unit>> UpdatePieceAsync(Guid id, UpsertPieceRequest r, CancellationToken ct)
     {
         var piece = await db.Pieces.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (piece is null) return Error.NotFound("piece.notFound", "قطعه پیدا نشد.");
+        if (piece is null) return Error.NotFound("piece.notFound", "Stück nicht gefunden.");
         var oldWeight = piece.GoldWeightMg;
         try
         {
@@ -260,7 +260,7 @@ public sealed class CatalogService(IAppDbContext db, RateService rates, IClock c
     public async Task<Result<Unit>> DeletePieceAsync(Guid id, CancellationToken ct)
     {
         var piece = await db.Pieces.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (piece is null) return Error.NotFound("piece.notFound", "قطعه پیدا نشد.");
+        if (piece is null) return Error.NotFound("piece.notFound", "Stück nicht gefunden.");
         try { piece.SoftDelete(); }
         catch (DomainException ex) { return Error.Conflict("piece.notAvailable", ex.Message); }
         Audit("piece.delete", "Piece", piece.Id, piece.Barcode);

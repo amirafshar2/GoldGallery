@@ -10,7 +10,7 @@ namespace Gold.Api.Infrastructure;
 public sealed class RequestOtpValidator : AbstractValidator<RequestOtpRequest>
 {
     public RequestOtpValidator() => RuleFor(x => x.Phone).NotEmpty().MaximumLength(20)
-        .Must(p => AuthService.IranMobile().IsMatch(AuthService.NormalizePhone(p))).WithMessage("شماره موبایل معتبر نیست.");
+        .Must(p => AuthService.GermanMobile().IsMatch(AuthService.NormalizePhone(p))).WithMessage("Die Handynummer ist ungültig.");
 }
 
 public sealed class VerifyOtpValidator : AbstractValidator<VerifyOtpRequest>
@@ -18,7 +18,7 @@ public sealed class VerifyOtpValidator : AbstractValidator<VerifyOtpRequest>
     public VerifyOtpValidator()
     {
         RuleFor(x => x.Phone).NotEmpty().MaximumLength(20);
-        RuleFor(x => x.Code).NotEmpty().Matches(@"^\d{5}$").WithMessage("کد ۵ رقمی است.");
+        RuleFor(x => x.Code).NotEmpty().Matches(@"^\d{5}$").WithMessage("Der Code hat 5 Ziffern.");
     }
 }
 
@@ -28,7 +28,7 @@ public sealed class SetRateValidator : AbstractValidator<SetRateRequest>
     {
         RuleFor(x => x.SellPerGram18Rial).GreaterThan(0);
         RuleFor(x => x.BuyPerGram18Rial).GreaterThan(0).LessThanOrEqualTo(x => x.SellPerGram18Rial)
-            .WithMessage("نرخ خرید نباید از نرخ فروش بیشتر باشد.");
+            .WithMessage("Der Ankaufskurs darf nicht über dem Verkaufskurs liegen.");
     }
 }
 
@@ -68,7 +68,7 @@ public sealed class ProductValidator : AbstractValidator<UpsertProductRequest>
         RuleFor(x => x.Color).IsInEnum();
         RuleFor(x => x.WageKind).IsInEnum();
         RuleFor(x => x.WageValue).InclusiveBetween(0, 10_000).When(x => x.WageKind == WageKind.PercentOfRawGold)
-            .WithMessage("اجرت درصدی باید بین ۰ تا ۱۰۰٪ (۰ تا ۱۰۰۰۰ واحد پایه) باشد.");
+            .WithMessage("Der prozentuale Arbeitslohn muss zwischen 0 und 100 % (0 bis 10.000 Basispunkte) liegen.");
         RuleFor(x => x.WageValue).GreaterThan(0).When(x => x.WageKind == WageKind.FixedPerGram);
         RuleFor(x => x.ImageUrl).MaximumLength(500);
     }
@@ -80,7 +80,7 @@ public sealed class PieceValidator : AbstractValidator<UpsertPieceRequest>
     {
         RuleFor(x => x.Barcode).NotEmpty().MaximumLength(40);
         RuleFor(x => x.GoldGrams).GreaterThan(0).LessThan(10_000).PrecisionScale(8, 3, true)
-            .WithMessage("وزن باید مثبت و حداکثر ۳ رقم اعشار باشد.");
+            .WithMessage("Das Gewicht muss positiv sein und darf höchstens 3 Nachkommastellen haben.");
         RuleFor(x => x.StoneGrams).GreaterThanOrEqualTo(0).PrecisionScale(8, 3, true);
         RuleFor(x => x.Karat).InclusiveBetween(1, 1000);
         RuleFor(x => x.StoneValueRial).GreaterThanOrEqualTo(0);
@@ -90,14 +90,14 @@ public sealed class PieceValidator : AbstractValidator<UpsertPieceRequest>
 
 public sealed class QuoteValidator : AbstractValidator<CreateQuoteRequest>
 {
-    public QuoteValidator() => RuleFor(x => x.PieceIds).NotEmpty().Must(l => l.Count <= 10).WithMessage("حداکثر ۱۰ قطعه.");
+    public QuoteValidator() => RuleFor(x => x.PieceIds).NotEmpty().Must(l => l.Count <= 10).WithMessage("Höchstens 10 Stücke.");
 }
 
 public sealed class BuyBackValidator : AbstractValidator<BuyBackRequest>
 {
     public BuyBackValidator()
     {
-        RuleFor(x => x).Must(x => x.Grams is > 0 || x.Mesghal is > 0).WithMessage("وزن به گرم یا مثقال لازم است.");
+        RuleFor(x => x).Must(x => x.Grams is > 0 || x.Ounces is > 0).WithMessage("Bitte Gewicht in Gramm oder Unzen angeben.");
         RuleFor(x => x.Karat).InclusiveBetween(1, 1000);
     }
 }

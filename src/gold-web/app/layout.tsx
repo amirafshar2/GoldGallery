@@ -11,7 +11,7 @@ import { WhatsAppFloat } from "@/components/whatsapp-float";
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getSite();
   return {
-    title: s?.seo.title || s?.brand.name || "فروشگاه طلا",
+    title: s?.seo.title || s?.brand.name || "Goldshop",
     description: s?.seo.description || s?.brand.slogan || "",
     icons: s?.brand.faviconUrl ? [{ url: s.brand.faviconUrl }] : undefined,
     openGraph: s?.seo.ogImageUrl ? { images: [s.seo.ogImageUrl] } : undefined,
@@ -35,20 +35,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const site = await getSite();
   if (!site) {
     return (
-      <html lang="fa" dir="rtl"><body className="grid min-h-screen place-items-center p-6 text-center">
-        <p>اتصال به سرور برقرار نشد. لطفاً سرور API را اجرا کنید.</p>
+      <html lang="de"><body className="grid min-h-screen place-items-center p-6 text-center">
+        <p>Keine Verbindung zum Server. Bitte den API-Server starten.</p>
       </body></html>
     );
   }
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="de">
       <head><style dangerouslySetInnerHTML={{ __html: themeCss(site) }} /></head>
       <body className="min-h-screen">
         <SiteProvider site={site}>
           <Maintenance>
             {site.showcase && (
               <div className="bg-[repeating-linear-gradient(135deg,#1d1812,#1d1812_12px,#2a2219_12px,#2a2219_24px)] px-4 py-1.5 text-center text-[11px] text-[#F3D58A]" data-testid="showcase-ribbon">
-                نسخه‌ی نمایشی — طراحی پیشنهادی وب‌سایت {site.brand.name}. پرداخت‌ها آزمایشی‌اند و سفارشی ثبت نمی‌شود.
+                Demo-Version – Website-Entwurf für {site.brand.name}. Zahlungen sind nur Tests, es werden keine Bestellungen ausgeführt.
               </div>
             )}
             <Header />

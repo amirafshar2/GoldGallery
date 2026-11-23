@@ -31,7 +31,7 @@ public static class SiteEndpoints
             await using var s = file.OpenReadStream();
             var saved = await storage.SaveAsync(s, file.Length, ct);
             return saved is null
-                ? Results.Problem(statusCode: 422, title: "فقط تصویر JPG، PNG، WebP یا AVIF تا ۵ مگابایت، یا ویدیوی MP4 تا ۲۵ مگابایت مجاز است.")
+                ? Results.Problem(statusCode: 422, title: "Erlaubt sind nur Bilder (JPG, PNG, WebP oder AVIF) bis 5 MB oder Videos (MP4) bis 25 MB.")
                 : Results.Created($"/media/{saved.FileName}", new { url = $"/media/{saved.FileName}", saved.ContentType, saved.Bytes });
         }).WithTags("Admin site").RequireAuthorization(Policies.Staff)
           .DisableAntiforgery(); // JWT bearer auth (no cookies) → not CSRF-exposed

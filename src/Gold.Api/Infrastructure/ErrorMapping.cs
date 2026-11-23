@@ -33,9 +33,9 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log, 
         var (status, title) = ex switch
         {
             Gold.Domain.Common.DomainException => (StatusCodes.Status422UnprocessableEntity, ex.Message),
-            Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException => (StatusCodes.Status409Conflict, "اطلاعات هم‌زمان تغییر کرده است؛ دوباره تلاش کنید."),
-            BadHttpRequestException => (StatusCodes.Status400BadRequest, "درخواست نامعتبر است."),
-            _ => (StatusCodes.Status500InternalServerError, "خطای داخلی سرور."),
+            Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException => (StatusCodes.Status409Conflict, "Die Daten wurden gleichzeitig geändert. Bitte erneut versuchen."),
+            BadHttpRequestException => (StatusCodes.Status400BadRequest, "Ungültige Anfrage."),
+            _ => (StatusCodes.Status500InternalServerError, "Interner Serverfehler."),
         };
         if (status == 500) log.LogError(ex, "Unhandled exception");
         ctx.Response.StatusCode = status;

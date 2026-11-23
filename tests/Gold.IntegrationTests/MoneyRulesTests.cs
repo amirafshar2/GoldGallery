@@ -12,8 +12,8 @@ public class MoneyRulesTests : IDisposable
     [Fact]
     public async Task ConcurrentOrders_SamePiece_OnlyOneSucceeds()
     {
-        var a = await _app.CustomerAsync("09120000001");
-        var b = await _app.CustomerAsync("09120000002");
+        var a = await _app.CustomerAsync("015120000001");
+        var b = await _app.CustomerAsync("015120000002");
         var piece = await a.FirstAvailablePieceAsync();
 
         // Both get a valid quote first, then race to create the order.
@@ -79,8 +79,8 @@ public class MoneyRulesTests : IDisposable
     [Fact]
     public async Task CustomerCannotReadAnotherCustomersOrder()
     {
-        var a = await _app.CustomerAsync("09120000011");
-        var b = await _app.CustomerAsync("09120000012");
+        var a = await _app.CustomerAsync("015120000011");
+        var b = await _app.CustomerAsync("015120000012");
         var order = await (await a.OrderPieceAsync(await a.FirstAvailablePieceAsync("bangle-classic"))).Json();
         var res = await b.GetAsync($"/api/v1/orders/{order.GetProperty("id").GetString()}");
         Assert.Equal(HttpStatusCode.NotFound, res.StatusCode);

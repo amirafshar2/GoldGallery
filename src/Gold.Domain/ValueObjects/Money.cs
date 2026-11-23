@@ -3,7 +3,8 @@ using Gold.Domain.Common;
 namespace Gold.Domain.ValueObjects;
 
 /// <summary>
-/// Amount in Iranian Rial stored as long. Display in Toman (Rial / 10).
+/// Amount in the smallest currency unit (euro cents) stored as long. Display in euro (value / 100).
+/// Note: members are still called "Rial" for historical reasons (database columns); the unit is cents.
 /// </summary>
 public readonly record struct Money : IComparable<Money>
 {
@@ -21,7 +22,7 @@ public readonly record struct Money : IComparable<Money>
 
     public static Money FromToman(long toman) => FromRial(checked(toman * 10));
 
-    /// <summary>Rounds a decimal rial value to whole rial (half away from zero).</summary>
+    /// <summary>Rounds a decimal amount to whole cents (half away from zero).</summary>
     public static Money FromDecimalRial(decimal rial) =>
         FromRial((long)decimal.Round(rial, 0, MidpointRounding.AwayFromZero));
 

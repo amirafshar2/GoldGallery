@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { toman } from "@/lib/format";
+import { euro } from "@/lib/format";
 import { useSite } from "./site-provider";
 
 type Rate = { sellPerGram18Rial: number; buyPerGram18Rial: number; asOf: string; canSellOnline: boolean };
@@ -31,7 +31,7 @@ export function RateTicker({ compact = false }: { compact?: boolean }) {
         <span className={`relative inline-flex size-2 rounded-full ${rate.canSellOnline ? "bg-emerald-400" : "bg-amber-400"}`} />
       </span>
       <span className="text-muted-foreground">{t("rate.label")}</span>
-      <b className="num gold-text text-base">{toman(rate.sellPerGram18Rial)}</b>
+      <b className="num gold-text text-base">{euro(rate.sellPerGram18Rial)}</b>
       <span className="text-muted-foreground">{t("rate.toman")}</span>
       {!rate.canSellOnline && !compact && <span className="text-amber-400">{t("rate.paused")}</span>}
     </div>

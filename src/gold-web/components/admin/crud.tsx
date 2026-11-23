@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 export function RowActions({ onEdit, onDelete }: { onEdit?: () => void; onDelete?: () => void }) {
   return (
     <div className="flex justify-end gap-1">
-      {onEdit && <Button size="icon" variant="ghost" onClick={onEdit} aria-label="ویرایش"><Pencil /></Button>}
-      {onDelete && <Button size="icon" variant="ghost" onClick={() => { if (window.confirm("حذف شود؟")) onDelete(); }} aria-label="حذف"><Trash2 className="text-destructive" /></Button>}
+      {onEdit && <Button size="icon" variant="ghost" onClick={onEdit} aria-label="Bearbeiten"><Pencil /></Button>}
+      {onDelete && <Button size="icon" variant="ghost" onClick={() => { if (window.confirm("Wirklich löschen?")) onDelete(); }} aria-label="Entfernen"><Trash2 className="text-destructive" /></Button>}
     </div>
   );
 }

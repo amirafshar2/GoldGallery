@@ -11,9 +11,9 @@ public sealed record PricingPolicy(
     Percentage Tax,
     RoundingPolicy Rounding)
 {
-    /// <summary>Demo defaults matching common Iranian practice (7% profit, 10% tax on wage+profit).</summary>
+    /// <summary>Demo defaults: 7% profit, 19% VAT on wage+profit, final price rounded down to whole euros.</summary>
     public static PricingPolicy Demo => new(
         Percentage.FromPercent(7),
-        Percentage.FromPercent(10),
-        new RoundingPolicy(10_000, RoundingDirection.Down));
+        Percentage.FromPercent(19),
+        new RoundingPolicy(100, RoundingDirection.Down));
 }

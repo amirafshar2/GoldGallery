@@ -16,13 +16,13 @@ public class CrudAndSiteTests : IDisposable
         var admin = await _app.DemoAsync("admin");
 
         // Create
-        var cat = await (await admin.PostAsJsonAsync("/api/v1/admin/categories", new { slug = "test-cat", name = "دسته تست", sortOrder = 99 })).Json();
+        var cat = await (await admin.PostAsJsonAsync("/api/v1/admin/categories", new { slug = "test-cat", name = "Testkategorie", sortOrder = 99 })).Json();
         var catId = cat.GetProperty("id").GetString();
-        var branch = await (await admin.PostAsJsonAsync("/api/v1/admin/branches", new { name = "شعبه تست", address = "آدرس" })).Json();
+        var branch = await (await admin.PostAsJsonAsync("/api/v1/admin/branches", new { name = "Testfiliale", address = "Adresse" })).Json();
         var branchId = branch.GetProperty("id").GetString();
         var prodRes = await admin.PostAsJsonAsync("/api/v1/admin/products", new
         {
-            slug = "test-ring", name = "انگشتر تست", description = "", categoryId = catId, audience = 1, color = 1,
+            slug = "test-ring", name = "Testring", description = "", categoryId = catId, audience = 1, color = 1,
             wageKind = 1, wageValue = 1500, imageUrl = "", isFeatured = false,
         });
         Assert.Equal(HttpStatusCode.Created, prodRes.StatusCode);
@@ -39,7 +39,7 @@ public class CrudAndSiteTests : IDisposable
         Assert.Equal(2.345m, detail.GetProperty("pieces")[0].GetProperty("goldGrams").GetDecimal());
 
         // Update
-        Assert.Equal(HttpStatusCode.OK, (await admin.PutAsJsonAsync($"/api/v1/admin/categories/{catId}", new { slug = "test-cat", name = "دسته ویرایش", sortOrder = 1 })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await admin.PutAsJsonAsync($"/api/v1/admin/categories/{catId}", new { slug = "test-cat", name = "Kategorie bearbeitet", sortOrder = 1 })).StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, (await admin.PutAsJsonAsync($"/api/v1/admin/pieces/{pieceId}", new
         {
             productId = prodId, branchId, barcode = "T-1", goldGrams = 2.5m, karat = 750, size = "60", stoneGrams = 0m, stoneValueRial = 0L,
@@ -85,14 +85,14 @@ public class CrudAndSiteTests : IDisposable
     public async Task Site_EveryTextAndBrandIsEditable_FromAdmin()
     {
         var admin = await _app.DemoAsync("admin");
-        var brand = new { name = "طلای امیر", slogan = "شعار جدید", logoUrl = "/media/logo.png", faviconUrl = "" };
+        var brand = new { name = "Gold Amir", slogan = "Neuer Slogan", logoUrl = "/media/logo.png", faviconUrl = "" };
         Assert.Equal(HttpStatusCode.NoContent, (await admin.PutAsJsonAsync("/api/v1/admin/site/brand", brand)).StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, (await admin.PutAsJsonAsync("/api/v1/admin/site/texts",
-            new { values = new Dictionary<string, string> { ["nav.shop"] = "ویترین" } })).StatusCode);
+            new { values = new Dictionary<string, string> { ["nav.shop"] = "Vitrine" } })).StatusCode);
 
         var site = await (await _app.Client().GetAsync("/api/v1/site")).Json();
-        Assert.Equal("طلای امیر", site.GetProperty("brand").GetProperty("name").GetString());
-        Assert.Equal("ویترین", site.GetProperty("texts").GetProperty("values").GetProperty("nav.shop").GetString());
+        Assert.Equal("Gold Amir", site.GetProperty("brand").GetProperty("name").GetString());
+        Assert.Equal("Vitrine", site.GetProperty("texts").GetProperty("values").GetProperty("nav.shop").GetString());
     }
 
     [Fact]
@@ -136,8 +136,8 @@ public class CrudAndSiteTests : IDisposable
     [Fact]
     public async Task BuyBack_Estimate_NoWage()
     {
-        var r = await (await _app.Client().PostAsJsonAsync("/api/v1/buyback/estimate", new { mesghal = 1m, karat = 740 })).Json();
-        Assert.Equal(4.608m, r.GetProperty("grams").GetDecimal());
+        var r = await (await _app.Client().PostAsJsonAsync("/api/v1/buyback/estimate", new { ounces = 1m, karat = 740 })).Json();
+        Assert.Equal(31.103m, r.GetProperty("grams").GetDecimal());
         Assert.True(r.GetProperty("valueRial").GetInt64() > 0);
     }
 }
@@ -160,20 +160,20 @@ public class EmptyInstallTests : IDisposable
 
         // Wrong install code
         Assert.Equal(HttpStatusCode.Forbidden, (await anon.PostAsJsonAsync("/api/v1/setup/init",
-            new { setupToken = "nope", phone = "09125556677", fullName = "صاحب مغازه" })).StatusCode);
+            new { setupToken = "nope", phone = "015125556677", fullName = "Ladeninhaber" })).StatusCode);
         // Right install code → first admin
         Assert.Equal(HttpStatusCode.NoContent, (await anon.PostAsJsonAsync("/api/v1/setup/init",
-            new { setupToken = "TEST-setup-token-123456", phone = "09125556677", fullName = "صاحب مغازه" })).StatusCode);
+            new { setupToken = "TEST-setup-token-123456", phone = "015125556677", fullName = "Ladeninhaber" })).StatusCode);
         // Second time is refused
         Assert.Equal(HttpStatusCode.Conflict, (await anon.PostAsJsonAsync("/api/v1/setup/init",
-            new { setupToken = "TEST-setup-token-123456", phone = "09120000000", fullName = "x" })).StatusCode);
+            new { setupToken = "TEST-setup-token-123456", phone = "015120000000", fullName = "x" })).StatusCode);
 
-        var admin = await _app.CustomerAsync("09125556677");
+        var admin = await _app.CustomerAsync("015125556677");
         var ob = await (await admin.GetAsync("/api/v1/admin/onboarding")).Json();
         Assert.Equal(0, ob.GetProperty("percent").GetInt32());
         Assert.Equal("brand", ob.GetProperty("next").GetProperty("key").GetString());
 
-        await admin.PutAsJsonAsync("/api/v1/admin/site/brand", new { name = "طلای مشتری", slogan = "", logoUrl = "/media/x.png", faviconUrl = "" });
+        await admin.PutAsJsonAsync("/api/v1/admin/site/brand", new { name = "Gold Kunde", slogan = "", logoUrl = "/media/x.png", faviconUrl = "" });
         ob = await (await admin.GetAsync("/api/v1/admin/onboarding")).Json();
         Assert.Equal("theme", ob.GetProperty("next").GetProperty("key").GetString());
         Assert.True(ob.GetProperty("percent").GetInt32() > 0);

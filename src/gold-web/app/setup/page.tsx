@@ -19,17 +19,17 @@ export default function Setup() {
     try { await api("/setup/init", { method: "POST", json: f }); router.push("/login?next=/admin"); } catch (e) { setErr((e as ApiError).message); }
   };
   if (needs === null) return null;
-  if (!needs) return <p className="py-24 text-center text-muted-foreground">این سایت قبلاً راه‌اندازی شده است.</p>;
+  if (!needs) return <p className="py-24 text-center text-muted-foreground">Diese Website wurde bereits eingerichtet.</p>;
   return (
     <div className="mx-auto max-w-md space-y-5 px-4 py-16">
-      <h1 className="text-2xl font-extrabold">به سایت جدیدتان خوش آمدید 👋</h1>
-      <p className="text-muted-foreground">کد نصب را از طراح سایت گرفته‌اید. با آن، حساب مدیر خودتان را بسازید. بعد از ورود، دستیار قدم‌به‌قدم کمکتان می‌کند سایت را پر کنید.</p>
+      <h1 className="text-2xl font-extrabold">Willkommen auf Ihrer neuen Website 👋</h1>
+      <p className="text-muted-foreground">Den Installationscode haben Sie von Ihrem Webdesigner bekommen. Damit legen Sie Ihr eigenes Admin-Konto an. Nach der Anmeldung führt Sie ein Assistent Schritt für Schritt durch die Einrichtung.</p>
       <div className="space-y-4 rounded-[var(--radius)] border bg-card p-6">
-        <div className="space-y-2"><Label>کد نصب</Label><Input dir="ltr" value={f.setupToken} onChange={(e) => setF({ ...f, setupToken: e.target.value })} /></div>
-        <div className="space-y-2"><Label>نام شما</Label><Input value={f.fullName} onChange={(e) => setF({ ...f, fullName: e.target.value })} /></div>
-        <div className="space-y-2"><Label>شماره موبایل</Label><Input dir="ltr" inputMode="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></div>
+        <div className="space-y-2"><Label>Installationscode</Label><Input dir="ltr" value={f.setupToken} onChange={(e) => setF({ ...f, setupToken: e.target.value })} /></div>
+        <div className="space-y-2"><Label>Ihr Name</Label><Input value={f.fullName} onChange={(e) => setF({ ...f, fullName: e.target.value })} /></div>
+        <div className="space-y-2"><Label>Handynummer</Label><Input dir="ltr" inputMode="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></div>
         {err && <p className="text-sm text-destructive">{err}</p>}
-        <Button className="w-full" onClick={submit}>ساخت حساب مدیر</Button>
+        <Button className="w-full" onClick={submit}>Admin-Konto anlegen</Button>
       </div>
     </div>
   );

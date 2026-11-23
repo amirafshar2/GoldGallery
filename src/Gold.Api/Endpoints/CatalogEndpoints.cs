@@ -21,7 +21,7 @@ public static class CatalogEndpoints
                 new HybridCacheEntryOptions { Expiration = TimeSpan.FromSeconds(30), LocalCacheExpiration = TimeSpan.FromSeconds(30) },
                 [SignalRRateNotifier.RateTag], ct);
             return dto is null
-                ? ResultExtensions.Problem(Gold.Application.Common.Error.Unavailable("rate.missing", "نرخ روز هنوز ثبت نشده است."))
+                ? ResultExtensions.Problem(Gold.Application.Common.Error.Unavailable("rate.missing", "Der Tageskurs wurde noch nicht erfasst."))
                 : Results.Ok(dto);
         });
         rates.MapGet("/history", async (int? days, RateService svc, CancellationToken ct) => Results.Ok(await svc.GetHistoryAsync(days ?? 30, ct)));

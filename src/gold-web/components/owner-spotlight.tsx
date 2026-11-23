@@ -3,7 +3,7 @@
 /**
  * "Meet the owner" — for shops whose owner is the face of the brand.
  * Photo + quote + highlights, his own short videos (uploaded MP4 or Instagram reel, loaded on click),
- * and his gold-buying tips. Motion: 21st @magicui BlurFade + BorderBeam. Everything comes from admin → «مشاور / مدیر».
+ * and his gold-buying tips. Motion: 21st @magicui BlurFade + BorderBeam. Everything comes from admin → "Inhaber / Berater".
  */
 import { useEffect, useState } from "react";
 import { Check, AtSign as Instagram, MessageCircle, Play, Lightbulb } from "lucide-react";
@@ -41,7 +41,7 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
               : <div className="grid size-full place-items-center">
                   <div className="text-center">
                     <div className="mx-auto grid size-40 place-items-center rounded-full border border-gold-hi/40 text-7xl font-extrabold gold-text">{(o.name.trim().split(" ").slice(-1)[0] || o.name)[0]}</div>
-                    <p className="mt-6 text-sm text-velvet-muted">عکس آقای {o.name.split(" ").slice(-1)[0]} را از پنل بگذارید</p>
+                    <p className="mt-6 text-sm text-velvet-muted">Foto von {o.name.split(" ").slice(-1)[0]} im Admin-Panel hinterlegen</p>
                   </div>
                 </div>}
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-6 pt-24">
@@ -52,18 +52,18 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
           </div>
           {o.followers && (
             <div className="absolute -bottom-5 left-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/70 px-4 py-2 text-sm text-white backdrop-blur">
-              <Instagram className="size-4 text-gold-hi" /><span className="font-bold">{o.followers}</span><span className="text-white/70">دنبال‌کننده</span>
+              <Instagram className="size-4 text-gold-hi" /><span className="font-bold">{o.followers}</span><span className="text-white/70">Follower</span>
             </div>
           )}
         </BlurFade>
 
         <BlurFade inView delay={0.1} className="space-y-7">
           <div>
-            <p className="eyebrow">{subtitle || "مشاور شما"}</p>
+            <p className="eyebrow">{subtitle || "Ihr Berater"}</p>
             <h2 className="mt-3 text-3xl font-light leading-[1.4] sm:text-5xl">{title}</h2>
           </div>
           {o.quote && (
-            <blockquote className="border-r-2 border-gold-hi/70 pr-5 text-xl leading-9 text-velvet-foreground/90 sm:text-2xl">«{o.quote}»</blockquote>
+            <blockquote className="border-l-2 border-gold-hi/70 pl-5 text-xl leading-9 text-velvet-foreground/90 sm:text-2xl">„{o.quote}“</blockquote>
           )}
           {o.highlights.length > 0 && (
             <ul className="grid gap-3 sm:grid-cols-2">
@@ -76,9 +76,9 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
           )}
           <div className="flex flex-wrap gap-3">
             {wa && (
-              <a href={waLink(wa, `سلام آقای ${o.name.split(" ").slice(-1)[0]}، برای مشاوره‌ی خرید طلا پیام می‌دهم.`)} target="_blank" rel="noopener noreferrer"
+              <a href={waLink(wa, `Hallo Herr ${o.name.split(" ").slice(-1)[0]}, ich schreibe wegen einer Beratung zum Goldkauf.`)} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-[#1f9d55] px-6 py-3 font-semibold text-white transition hover:brightness-110" data-testid="owner-whatsapp">
-                <MessageCircle className="size-5" /> {o.ctaText || "مشاوره در واتساپ"}
+                <MessageCircle className="size-5" /> {o.ctaText || "Beratung per WhatsApp"}
               </a>
             )}
             {o.instagram && (
@@ -94,7 +94,7 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
       {o.reels.length > 0 && (
         <div className="relative mx-auto mt-20 max-w-7xl px-4">
           <div className="mb-6 flex items-end justify-between gap-4">
-            <div><p className="eyebrow">ویدیوهای آقای {o.name.split(" ").slice(-1)[0]}</p><h3 className="mt-2 text-2xl font-light sm:text-3xl">حرف‌های رو در رو</h3></div>
+            <div><p className="eyebrow">Videos von {o.name.split(" ").slice(-1)[0]}</p><h3 className="mt-2 text-2xl font-light sm:text-3xl">Im persönlichen Gespräch</h3></div>
           </div>
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [scrollbar-width:none]">
             {o.reels.map((r, i) => (
@@ -107,8 +107,8 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
 
       {o.tips.length > 0 && (
         <div className="relative mx-auto mt-20 max-w-7xl px-4">
-          <p className="eyebrow">نکته‌های طلایی</p>
-          <h3 className="mt-2 text-2xl font-light sm:text-3xl">قبل از خرید، این‌ها را بدانید</h3>
+          <p className="eyebrow">Goldene Tipps</p>
+          <h3 className="mt-2 text-2xl font-light sm:text-3xl">Das sollten Sie vor dem Kauf wissen</h3>
           <div className="mt-8 grid gap-px overflow-hidden rounded-[var(--radius)] border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
             {o.tips.map((t, i) => (
               <BlurFade key={t.title} inView delay={i * 0.06} className="bg-velvet p-6 sm:p-8">
@@ -128,7 +128,7 @@ export function OwnerSpotlight({ title, subtitle }: { title: string; subtitle: s
           className="fixed inset-0 z-[60] grid place-items-center bg-black/85 p-4 backdrop-blur-sm">
           <div className="relative w-full max-w-sm overflow-hidden rounded-[var(--radius)] border border-gold-hi/30" onClick={(e) => e.stopPropagation()}>
             <video src={playing.videoUrl} controls autoPlay playsInline className="aspect-[9/16] w-full bg-black object-contain" />
-            <button type="button" onClick={() => setPlaying(null)} className="absolute top-3 left-3 grid size-9 place-items-center rounded-full bg-black/60 text-white" aria-label="بستن">✕</button>
+            <button type="button" onClick={() => setPlaying(null)} className="absolute top-3 left-3 grid size-9 place-items-center rounded-full bg-black/60 text-white" aria-label="Schließen">✕</button>
           </div>
         </div>
       )}
@@ -152,14 +152,14 @@ function ReelCard({ r, index, poster, onPlay }: { r: Reel; index: number; poster
       </span>
       <span className="absolute inset-x-0 bottom-0 space-y-2 p-5">
         <span className="block text-base font-semibold leading-7 text-velvet-foreground">{r.title}</span>
-        <span className="block text-xs text-gold-hi/90">{native ? "پخش ویدیو" : "تماشا در اینستاگرام ↗"}</span>
+        <span className="block text-xs text-gold-hi/90">{native ? "Video abspielen" : "Auf Instagram ansehen ↗"}</span>
       </span>
     </>
   );
-  const cls = "group relative block aspect-[9/16] w-52 shrink-0 snap-start overflow-hidden rounded-[var(--radius)] border border-white/10 bg-velvet text-right transition-colors duration-500 hover:border-gold-hi/60 sm:w-60";
+  const cls = "group relative block aspect-[9/16] w-52 shrink-0 snap-start overflow-hidden rounded-[var(--radius)] border border-white/10 bg-velvet text-left transition-colors duration-500 hover:border-gold-hi/60 sm:w-60";
   return native ? (
-    <button type="button" onClick={() => onPlay(r)} className={cls} aria-label={`پخش: ${r.title}`}>{body}</button>
+    <button type="button" onClick={() => onPlay(r)} className={cls} aria-label={`Abspielen: ${r.title}`}>{body}</button>
   ) : r.instagramUrl ? (
-    <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className={cls} aria-label={`${r.title} در اینستاگرام`}>{body}</a>
+    <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className={cls} aria-label={`${r.title} auf Instagram`}>{body}</a>
   ) : null;
 }

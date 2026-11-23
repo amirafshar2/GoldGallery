@@ -27,31 +27,28 @@ public sealed partial class AuthService(IAppDbContext db, IClock clock, ISmsSend
         ["admin"] = UserRole.Admin,
     };
 
-    [GeneratedRegex(@"^09\d{9}$")]
-    public static partial Regex IranMobile();
+    [GeneratedRegex(@"^01[5-7]\d{8,9}$")]
+    public static partial Regex GermanMobile();
 
     public static string NormalizePhone(string phone)
     {
-        var digits = new string(phone.Trim().Select(ch => ch switch
-        {
-            >= '۰' and <= '۹' => (char)('0' + (ch - '۰')),
-            >= '٠' and <= '٩' => (char)('0' + (ch - '٠')),
-            _ => ch,
-        }).Where(char.IsDigit).ToArray());
-        if (digits.StartsWith("98") && digits.Length == 12) digits = "0" + digits[2..];
-        if (digits.Length == 10 && digits.StartsWith('9')) digits = "0" + digits;
+        var digits = new string(phone.Trim().Where(char.IsDigit).ToArray());
+        // +49 151 … / 0049 151 … → 0151 …
+        if (digits.StartsWith("0049")) digits = "0" + digits[4..];
+        else if (digits.StartsWith("49") && digits.Length >= 12) digits = "0" + digits[2..];
+        else if (digits.Length is 10 or 11 && digits.StartsWith('1')) digits = "0" + digits;
         return digits;
     }
 
     public async Task<Result<Unit>> RequestOtpAsync(RequestOtpRequest req, CancellationToken ct)
     {
         var phone = NormalizePhone(req.Phone);
-        if (!IranMobile().IsMatch(phone)) return Error.Validation("phone.invalid", "شماره موبایل معتبر نیست.");
+        if (!GermanMobile().IsMatch(phone)) return Error.Validation("phone.invalid", "Die Handynummer ist ungültig.");
 
         var code = RandomNumberGenerator.GetInt32(10000, 100000).ToString();
         db.OtpCodes.Add(OtpCode.Create(phone, hasher.Hash(code), clock.Now.Add(OtpLifetime)));
         await db.SaveChangesAsync(ct);
-        await sms.SendAsync(phone, $"کد ورود شما: {code}", ct);
+        await sms.SendAsync(phone, $"Ihr Anmeldecode: {code}", ct);
         return Unit.Value;
     }
 
@@ -59,13 +56,13 @@ public sealed partial class AuthService(IAppDbContext db, IClock clock, ISmsSend
     {
         var phone = NormalizePhone(req.Phone);
         var otp = await db.OtpCodes.Where(o => o.Phone == phone).OrderByDescending(o => o.Id).FirstOrDefaultAsync(ct);
-        if (otp is null || !otp.CanTry(clock.Now)) return Error.Unauthorized("otp.invalid", "کد منقضی یا نامعتبر است.");
+        if (otp is null || !otp.CanTry(clock.Now)) return Error.Unauthorized("otp.invalid", "Der Code ist abgelaufen oder ungültig.");
 
         otp.RegisterAttempt();
         if (!hasher.Verify(req.Code.Trim(), otp.CodeHash))
         {
             await db.SaveChangesAsync(ct);
-            return Error.Unauthorized("otp.invalid", "کد وارد شده اشتباه است.");
+            return Error.Unauthorized("otp.invalid", "Der eingegebene Code ist falsch.");
         }
         otp.MarkUsed();
 
@@ -82,9 +79,9 @@ public sealed partial class AuthService(IAppDbContext db, IClock clock, ISmsSend
 
     public async Task<Result<AuthResult>> DemoLoginAsync(DemoLoginRequest req, CancellationToken ct)
     {
-        if (!DemoRoles.TryGetValue(req.Role ?? "", out var role)) return Error.Validation("demo.role", "نقش نامعتبر است.");
+        if (!DemoRoles.TryGetValue(req.Role ?? "", out var role)) return Error.Validation("demo.role", "Ungültige Rolle.");
         var user = await db.Users.FirstOrDefaultAsync(u => u.IsDemo && u.Role == role, ct);
-        if (user is null) return Error.NotFound("demo.user", "حساب نمایشی این نقش وجود ندارد.");
+        if (user is null) return Error.NotFound("demo.user", "Für diese Rolle gibt es kein Demo-Konto.");
 
         var result = Issue(user, isDemo: true, familyId: Guid.NewGuid());
         db.AuditLogs.Add(AuditLog.Create(clock.Now, user.Id, "auth.demoLogin", "User", user.Id.ToString(), role.ToString(), isDemo: true));
@@ -101,10 +98,10 @@ public sealed partial class AuthService(IAppDbContext db, IClock clock, ISmsSend
 
     public async Task<Result<AuthResult>> RefreshAsync(string? refreshToken, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(refreshToken)) return Error.Unauthorized("refresh.missing", "نشست منقضی شده است.");
+        if (string.IsNullOrWhiteSpace(refreshToken)) return Error.Unauthorized("refresh.missing", "Die Sitzung ist abgelaufen.");
         var hash = hasher.Hash(refreshToken);
         var stored = await db.RefreshTokens.FirstOrDefaultAsync(t => t.TokenHash == hash, ct);
-        if (stored is null) return Error.Unauthorized("refresh.invalid", "نشست نامعتبر است.");
+        if (stored is null) return Error.Unauthorized("refresh.invalid", "Ungültige Sitzung.");
 
         if (!stored.IsActive(clock.Now))
         {
@@ -116,11 +113,11 @@ public sealed partial class AuthService(IAppDbContext db, IClock clock, ISmsSend
                 db.AuditLogs.Add(AuditLog.Create(clock.Now, stored.UserId, "auth.refreshReuse", "RefreshToken", stored.FamilyId.ToString()));
                 await db.SaveChangesAsync(ct);
             }
-            return Error.Unauthorized("refresh.invalid", "نشست نامعتبر است.");
+            return Error.Unauthorized("refresh.invalid", "Ungültige Sitzung.");
         }
 
         var user = await db.Users.FirstOrDefaultAsync(u => u.Id == stored.UserId, ct);
-        if (user is null) return Error.Unauthorized("refresh.invalid", "نشست نامعتبر است.");
+        if (user is null) return Error.Unauthorized("refresh.invalid", "Ungültige Sitzung.");
 
         stored.Revoke(clock.Now);
         var result = Issue(user, stored.IsDemo, stored.FamilyId);
@@ -142,7 +139,7 @@ public sealed partial class AuthService(IAppDbContext db, IClock clock, ISmsSend
     public async Task<Result<MeDto>> MeAsync(Guid userId, CancellationToken ct)
     {
         var u = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == userId, ct);
-        return u is null ? Error.NotFound("user.notFound", "کاربر پیدا نشد.") : ToMe(u);
+        return u is null ? Error.NotFound("user.notFound", "Benutzer nicht gefunden.") : ToMe(u);
     }
 
     private AuthResult Issue(User user, bool isDemo, Guid familyId)

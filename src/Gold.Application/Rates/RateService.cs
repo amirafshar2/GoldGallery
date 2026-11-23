@@ -29,7 +29,7 @@ public sealed class RateService(IAppDbContext db, IClock clock, ICurrentUser use
     public async Task<Result<RateDto>> GetCurrentAsync(CancellationToken ct)
     {
         var (cur, prev) = await GetLatestTwoAsync(ct);
-        if (cur is null) return Error.Unavailable("rate.missing", "نرخ روز هنوز ثبت نشده است.");
+        if (cur is null) return Error.Unavailable("rate.missing", "Der Tageskurs wurde noch nicht erfasst.");
         return ToDto(cur, guard.Check(cur, prev, clock.Now));
     }
 
@@ -51,7 +51,7 @@ public sealed class RateService(IAppDbContext db, IClock clock, ICurrentUser use
 
         var (cur, _) = await GetLatestTwoAsync(ct);
         if (cur is not null && guard.Check(rate, cur, clock.Now) == RateHealth.AbnormalJump && !req.ConfirmLargeJump)
-            return Error.Conflict("rate.jump", "تغییر نرخ بیش از حد مجاز است؛ برای ثبت، تأیید دوم لازم است (ConfirmLargeJump).");
+            return Error.Conflict("rate.jump", "Die Kursänderung ist größer als erlaubt; zum Speichern ist eine zweite Bestätigung nötig (ConfirmLargeJump).");
 
         db.GoldRates.Add(GoldRateEntry.From(rate, user.Id));
         db.AuditLogs.Add(AuditLog.Create(clock.Now, user.Id, "rate.set", "GoldRate", "-",

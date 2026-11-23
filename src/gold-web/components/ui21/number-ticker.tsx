@@ -1,4 +1,4 @@
-// Source: 21st.dev @magicui/number-ticker — https://github.com/magicuidesign/magicui (MIT). Imported verbatim; only "motion/react" → "framer-motion" and an optional `locale` prop (fa-IR digits).
+// Source: 21st.dev @magicui/number-ticker — https://github.com/magicuidesign/magicui (MIT). Imported verbatim; only "motion/react" → "framer-motion" and an optional `locale` prop (e.g. de-DE).
 "use client"
 
 import { useEffect, useRef, type ComponentPropsWithoutRef } from "react"

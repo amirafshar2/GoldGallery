@@ -1,18 +1,18 @@
 {
   "profiles": {
-    "سایت + API (دموی گالری مروجی)": {
+    "Website + API (Showcase-Demo)": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5080",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy",
-        "Seed__Profile": "Moraveji",
+        "Seed__Profile": "Showcase",
         "Showcase__Enabled": "true",
-        "ConnectionStrings__Default": "Data Source=gold-moraveji.db"
+        "ConnectionStrings__Default": "Data Source=gold-showcase.db"
       }
     },
-    "سایت + API (دمو)": {
+    "Website + API (Demo)": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5080",
@@ -21,7 +21,7 @@
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
       }
     },
-    "سایت + API (نصب خالی برای مشتری جدید)": {
+    "Website + API (leere Installation für einen neuen Kunden)": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5080",
@@ -34,7 +34,7 @@
         "DemoLogin__Enabled": "false"
       }
     },
-    "فقط API + Swagger": {
+    "Nur API + Swagger": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",

@@ -28,7 +28,7 @@ public sealed class Branch : Entity
     public static Branch Create(string name, string address = "") => new() { Name = name, Address = address };
 }
 
-/// <summary>A design/model (مدل). Real stock lives in <see cref="Piece"/> — every piece has its own weight.</summary>
+/// <summary>A design/model (product). Real stock lives in <see cref="Piece"/> — every piece has its own weight.</summary>
 public sealed class Product : Entity
 {
     public string Slug { get; private set; } = default!;
@@ -39,7 +39,7 @@ public sealed class Product : Entity
     public Audience Audience { get; private set; }
     public GoldColor Color { get; private set; }
     public WageKind WageKind { get; private set; }
-    /// <summary>Basis points when <see cref="WageKind.PercentOfRawGold"/>, rial per gram when FixedPerGram.</summary>
+    /// <summary>Basis points when <see cref="WageKind.PercentOfRawGold"/>, cents per gram when FixedPerGram.</summary>
     public long WageValue { get; private set; }
     public string ImageUrl { get; private set; } = "";
     public bool IsFeatured { get; private set; }
@@ -80,7 +80,7 @@ public sealed class Product : Entity
         : WageRule.FixedPerGram(Money.FromRial(WageValue));
 }
 
-/// <summary>A single physical item with its own weight, size and branch (قطعه‌ی یکتا).</summary>
+/// <summary>A single physical item with its own weight, size and branch (unique piece).</summary>
 public sealed class Piece : Entity, IConcurrencyStamped
 {
     public Guid ProductId { get; private set; }

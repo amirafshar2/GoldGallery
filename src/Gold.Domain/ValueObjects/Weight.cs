@@ -4,12 +4,12 @@ namespace Gold.Domain.ValueObjects;
 
 /// <summary>
 /// Gold weight stored as whole milligrams (never double/float).
-/// 1 gram = 1000 mg. Iranian scales show grams with three decimals, which maps exactly to mg.
+/// 1 gram = 1000 mg. Jewellery scales show grams with three decimals, which maps exactly to mg.
 /// </summary>
 public readonly record struct Weight
 {
-    /// <summary>1 mesghal = 4.608 g (used when buying old gold).</summary>
-    public const long MilligramsPerMesghal = 4_608;
+    /// <summary>1 troy ounce ≈ 31.103 g (used for bullion and when buying old gold).</summary>
+    public const long MilligramsPerTroyOunce = 31_103;
 
     public long Milligrams { get; }
 
@@ -33,11 +33,11 @@ public readonly record struct Weight
         return new Weight((long)mg);
     }
 
-    public static Weight FromMesghal(decimal mesghal) =>
-        FromMilligrams((long)decimal.Round(mesghal * MilligramsPerMesghal, 0, MidpointRounding.AwayFromZero));
+    public static Weight FromTroyOunces(decimal ounces) =>
+        FromMilligrams((long)decimal.Round(ounces * MilligramsPerTroyOunce, 0, MidpointRounding.AwayFromZero));
 
     public decimal Grams => Milligrams / 1000m;
-    public decimal Mesghal => Milligrams / (decimal)MilligramsPerMesghal;
+    public decimal TroyOunces => Milligrams / (decimal)MilligramsPerTroyOunce;
 
     public bool IsZero => Milligrams == 0;
 

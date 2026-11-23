@@ -44,7 +44,7 @@ function Inner() {
         <p className="text-center text-sm text-muted-foreground">{site.brand.name}</p>
         <div className="space-y-2">
           <Label htmlFor="phone">{t("login.phone")}</Label>
-          <Input id="phone" inputMode="tel" dir="ltr" placeholder="09xxxxxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={sent} />
+          <Input id="phone" inputMode="tel" dir="ltr" placeholder="0151 23456789" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={sent} />
         </div>
         {sent && (
           <div className="space-y-2">
@@ -65,7 +65,7 @@ function Inner() {
               const I = ICONS[r.role];
               return (
                 <button key={r.role} data-testid={`demo-${r.role}`} onClick={async () => go(await demoLogin(r.role))}
-                  className="flex min-h-12 items-center gap-3 rounded-[var(--radius)] border bg-card p-4 text-right transition-colors hover:border-primary">
+                  className="flex min-h-12 items-center gap-3 rounded-[var(--radius)] border bg-card p-4 text-left transition-colors hover:border-primary">
                   <I className="size-6 shrink-0 text-primary" />
                   <span><b className="block">{r.label}</b><span className="text-xs text-muted-foreground">{r.hint}</span></span>
                 </button>

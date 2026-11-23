@@ -4,10 +4,10 @@ using System.Text.Json;
 
 namespace Gold.IntegrationTests;
 
-/// <summary>Public showcase (demo for presenting the site to a shop) + the Moraveji seed profile.</summary>
+/// <summary>Public showcase (demo for presenting the site to a shop) + the "Showcase" seed profile (fictional jeweller).</summary>
 public class ShowcaseTests : IDisposable
 {
-    private readonly TestApp _app = new(new() { ["Showcase:Enabled"] = "true", ["Seed:Profile"] = "Moraveji" });
+    private readonly TestApp _app = new(new() { ["Showcase:Enabled"] = "true", ["Seed:Profile"] = "Showcase" });
     public void Dispose() => _app.Dispose();
 
     [Fact]
@@ -15,7 +15,7 @@ public class ShowcaseTests : IDisposable
     {
         var site = await _app.Client().GetFromJsonAsync<JsonElement>("/api/v1/site");
         Assert.True(site.GetProperty("showcase").GetBoolean());
-        Assert.Equal("گالری طلای مروجی", site.GetProperty("brand").GetProperty("name").GetString());
+        Assert.Equal("Goldatelier Lindner", site.GetProperty("brand").GetProperty("name").GetString());
         Assert.True(site.GetProperty("owner").GetProperty("enabled").GetBoolean());
         var inst = site.GetProperty("installments");
         Assert.Equal(25, inst.GetProperty("downPercent").GetInt32());
@@ -31,7 +31,7 @@ public class ShowcaseTests : IDisposable
         Assert.Equal(HttpStatusCode.UnprocessableEntity, (await admin.PutAsJsonAsync("/api/v1/admin/site/installments",
             new { enabled = true, maxRial = 1000, downPercent = 150, months = 5, monthlyFeePercent = 0, title = "x", note = "" })).StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, (await admin.PutAsJsonAsync("/api/v1/admin/site/installments",
-            new { enabled = true, maxRial = 2_000_000_000, downPercent = 30, months = 6, monthlyFeePercent = 0, title = "اقساط", note = "" })).StatusCode);
+            new { enabled = true, maxRial = 2_000_000_000, downPercent = 30, months = 6, monthlyFeePercent = 0, title = "Raten", note = "" })).StatusCode);
     }
 
     [Fact]

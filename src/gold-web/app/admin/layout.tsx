@@ -9,25 +9,25 @@ import { useMe } from "@/components/site-provider";
 import { OnboardingGuide } from "@/components/admin/onboarding";
 
 const NAV: { href: string; label: string; icon: React.ComponentType<{ className?: string }>; admin?: boolean }[] = [
-  { href: "/admin", label: "داشبورد", icon: LayoutDashboard },
-  { href: "/admin/orders", label: "سفارش‌ها", icon: ClipboardList },
-  { href: "/admin/products", label: "محصولات و قطعه‌ها", icon: Gem },
-  { href: "/admin/categories", label: "دسته‌بندی‌ها", icon: FolderTree, admin: true },
-  { href: "/admin/branches", label: "شعبه‌ها", icon: Store, admin: true },
-  { href: "/admin/pricing", label: "نرخ طلا و اجرت", icon: Coins, admin: true },
-  { href: "/admin/site/brand", label: "نام و لوگو", icon: ShieldCheck, admin: true },
-  { href: "/admin/site/theme", label: "رنگ و ظاهر", icon: Palette, admin: true },
-  { href: "/admin/site/contact", label: "تماس و آدرس", icon: Phone, admin: true },
-  { href: "/admin/site/home", label: "صفحه‌ی اول", icon: Home, admin: true },
-  { href: "/admin/site/trust", label: "مزیت‌ها", icon: Megaphone, admin: true },
-  { href: "/admin/site/owner", label: "مدیر / مشاور", icon: UserRound, admin: true },
-  { href: "/admin/site/installments", label: "خرید اقساطی", icon: CalendarCheck, admin: true },
-  { href: "/admin/site/legal", label: "مجوزها و درباره‌ی ما", icon: Scale, admin: true },
-  { href: "/admin/site/footer", label: "فوتر", icon: Type, admin: true },
-  { href: "/admin/site/seo", label: "سئو", icon: Globe, admin: true },
-  { href: "/admin/site/features", label: "بخش‌های فعال", icon: ToggleLeft, admin: true },
-  { href: "/admin/site/texts", label: "همه‌ی متن‌ها", icon: Type, admin: true },
-  { href: "/admin/site/publish", label: "انتشار سایت", icon: Rocket, admin: true },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/orders", label: "Bestellungen", icon: ClipboardList },
+  { href: "/admin/products", label: "Produkte und Stücke", icon: Gem },
+  { href: "/admin/categories", label: "Kategorien", icon: FolderTree, admin: true },
+  { href: "/admin/branches", label: "Filialen", icon: Store, admin: true },
+  { href: "/admin/pricing", label: "Goldkurs und Arbeitslohn", icon: Coins, admin: true },
+  { href: "/admin/site/brand", label: "Name und Logo", icon: ShieldCheck, admin: true },
+  { href: "/admin/site/theme", label: "Farben und Aussehen", icon: Palette, admin: true },
+  { href: "/admin/site/contact", label: "Kontakt und Adresse", icon: Phone, admin: true },
+  { href: "/admin/site/home", label: "Startseite", icon: Home, admin: true },
+  { href: "/admin/site/trust", label: "Vorteile", icon: Megaphone, admin: true },
+  { href: "/admin/site/owner", label: "Inhaber / Berater", icon: UserRound, admin: true },
+  { href: "/admin/site/installments", label: "Ratenkauf", icon: CalendarCheck, admin: true },
+  { href: "/admin/site/legal", label: "Rechtliches und Über uns", icon: Scale, admin: true },
+  { href: "/admin/site/footer", label: "Footer", icon: Type, admin: true },
+  { href: "/admin/site/seo", label: "SEO", icon: Globe, admin: true },
+  { href: "/admin/site/features", label: "Aktive Bereiche", icon: ToggleLeft, admin: true },
+  { href: "/admin/site/texts", label: "Alle Texte", icon: Type, admin: true },
+  { href: "/admin/site/publish", label: "Website veröffentlichen", icon: Rocket, admin: true },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -41,12 +41,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       else setReady(true);
     });
   }, [router]);
-  if (!ready || !me) return <div className="p-10 text-center text-muted-foreground">در حال بارگذاری…</div>;
+  if (!ready || !me) return <div className="p-10 text-center text-muted-foreground">Wird geladen…</div>;
   const isAdmin = me.role === "Admin";
 
   return (
     <div className="mx-auto flex max-w-[1500px] flex-col gap-6 px-4 py-6 lg:flex-row lg:items-start">
-      <nav className="flex gap-1 overflow-x-auto pb-2 lg:sticky lg:top-36 lg:w-56 lg:shrink-0 lg:flex-col lg:overflow-visible" aria-label="منوی مدیریت">
+      <nav className="flex gap-1 overflow-x-auto pb-2 lg:sticky lg:top-36 lg:w-56 lg:shrink-0 lg:flex-col lg:overflow-visible" aria-label="Admin-Menü">
         {NAV.filter((n) => isAdmin || !n.admin).map((n) => (
           <Link key={n.href} href={n.href} className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm whitespace-nowrap ${path === n.href ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}>
             <n.icon className="size-4" /> {n.label}

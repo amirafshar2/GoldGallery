@@ -137,7 +137,7 @@ public sealed class Payment : Entity, IConcurrencyStamped
     }
 }
 
-/// <summary>Append-only rial ledger. Balances are always computed from here.</summary>
+/// <summary>Append-only money ledger (cents). Balances are always computed from here.</summary>
 public sealed class CashLedgerEntry
 {
     public long Id { get; private set; }

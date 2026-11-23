@@ -38,7 +38,7 @@ export function Toggle({ label, value, onChange }: { label: string; value: boole
       <span className="text-sm">{label}</span>
       <button type="button" role="switch" aria-checked={value} onClick={() => onChange(!value)}
         className={`relative h-6 w-11 rounded-full transition-colors ${value ? "bg-primary" : "bg-muted"}`}>
-        <span className={`absolute top-0.5 size-5 rounded-full bg-white transition-all ${value ? "left-0.5" : "left-[22px]"}`} />
+        <span className={`absolute top-0.5 size-5 rounded-full bg-white transition-all ${value ? "left-[22px]" : "left-0.5"}`} />
       </button>
     </label>
   );
@@ -61,7 +61,7 @@ export function ImageField({ label, hint, value, onChange, video = false }: { la
             try { onChange(await upload(f)); } catch (x) { setErr((x as ApiError).message); } finally { setBusy(false); e.target.value = ""; }
           }} />
           <div className="flex gap-2">
-            <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => ref.current?.click()}>{busy ? "در حال آپلود…" : video ? "انتخاب ویدیو (MP4)" : "انتخاب تصویر"}</Button>
+            <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => ref.current?.click()}>{busy ? "Wird hochgeladen…" : video ? "Video wählen (MP4)" : "Bild wählen"}</Button>
             {value && <Button type="button" size="sm" variant="ghost" onClick={() => onChange("")}><Trash2 /></Button>}
           </div>
           {err && <p className="text-xs text-destructive">{err}</p>}
@@ -82,9 +82,9 @@ export function ImageList({ label, hint, value, onChange, max = 7 }: { label: st
           <div key={src + i} className="group relative aspect-square overflow-hidden rounded-xl border">
             <img src={src} alt="" className="size-full object-cover" />
             <div className="absolute inset-x-0 bottom-0 flex justify-between bg-black/60 p-1">
-              <button type="button" onClick={() => i > 0 && onChange(swap(value, i, i - 1))} aria-label="قبلی"><ArrowUp className="size-4" /></button>
-              <button type="button" onClick={() => onChange(value.filter((_, k) => k !== i))} aria-label="حذف"><Trash2 className="size-4 text-red-600" /></button>
-              <button type="button" onClick={() => i < value.length - 1 && onChange(swap(value, i, i + 1))} aria-label="بعدی"><ArrowDown className="size-4" /></button>
+              <button type="button" onClick={() => i > 0 && onChange(swap(value, i, i - 1))} aria-label="Zurück"><ArrowUp className="size-4" /></button>
+              <button type="button" onClick={() => onChange(value.filter((_, k) => k !== i))} aria-label="Entfernen"><Trash2 className="size-4 text-red-600" /></button>
+              <button type="button" onClick={() => i < value.length - 1 && onChange(swap(value, i, i + 1))} aria-label="Weiter"><ArrowDown className="size-4" /></button>
             </div>
           </div>
         ))}

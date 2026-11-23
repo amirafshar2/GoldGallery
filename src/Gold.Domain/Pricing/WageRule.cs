@@ -7,11 +7,11 @@ public enum WageKind
 {
     /// <summary>Wage as a percentage of the raw gold value (most common, e.g. 14%).</summary>
     PercentOfRawGold = 1,
-    /// <summary>Fixed rial amount per gram of gold.</summary>
+    /// <summary>Fixed amount (cents) per gram of gold.</summary>
     FixedPerGram = 2,
 }
 
-/// <summary>Manufacturing wage (اجرت ساخت) rule, configurable per product or category.</summary>
+/// <summary>Manufacturing wage (making charge) rule, configurable per product or category.</summary>
 public sealed record WageRule
 {
     public WageKind Kind { get; }

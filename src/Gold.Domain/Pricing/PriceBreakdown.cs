@@ -4,7 +4,7 @@ namespace Gold.Domain.Pricing;
 
 /// <summary>
 /// Transparent invoice lines shown to the customer before payment.
-/// Each line is rounded to whole rial; Total = sum of lines + RoundingAdjustment (≤ 0 when rounding down).
+/// Each line is rounded to whole cents; Total = sum of lines + RoundingAdjustment (≤ 0 when rounding down).
 /// </summary>
 public sealed record PriceBreakdown(
     Weight Weight,

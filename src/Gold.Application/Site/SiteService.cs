@@ -47,22 +47,22 @@ public sealed partial class SiteService(IAppDbContext db, IClock clock, ICurrent
     /// <summary>Replace one section. The JSON is validated by deserializing into the section's record type.</summary>
     public async Task<Result<Unit>> SetSectionAsync(string key, JsonElement body, CancellationToken ct)
     {
-        if (!SiteKeys.Editable.TryGetValue(key, out var type)) return Error.NotFound("site.section", "این بخش وجود ندارد.");
+        if (!SiteKeys.Editable.TryGetValue(key, out var type)) return Error.NotFound("site.section", "Diesen Bereich gibt es nicht.");
         object? value;
         try { value = body.Deserialize(type, Json); }
-        catch (JsonException) { return Error.Validation("site.json", "ساختار داده‌ی این بخش نامعتبر است."); }
-        if (value is null) return Error.Validation("site.json", "بدنه‌ی خالی است.");
+        catch (JsonException) { return Error.Validation("site.json", "Die Daten dieses Bereichs haben ein ungültiges Format."); }
+        if (value is null) return Error.Validation("site.json", "Der Inhalt ist leer.");
 
         if (value is ThemeSection t &&
             new[] { t.Background, t.Surface, t.Text, t.Primary, t.Muted }.Any(c => !HexColor().IsMatch(c)))
-            return Error.Validation("site.theme", "رنگ‌ها باید به‌صورت #RRGGBB باشند.");
+            return Error.Validation("site.theme", "Farben müssen im Format #RRGGBB angegeben werden.");
         if (value is InstallmentsSection i &&
             (i.DownPercent is < 0 or > 100 || i.Months is < 1 or > 36 || i.MonthlyFeePercent is < 0 or > 10 || i.MaxRial < 0))
-            return Error.Validation("site.installments", "پیش‌پرداخت ۰ تا ۱۰۰٪، تعداد قسط ۱ تا ۳۶ و کارمزد ماهانه ۰ تا ۱۰٪ باشد.");
-        if (Serialize(value).Length > 200_000) return Error.Validation("site.size", "حجم محتوا بیش از حد مجاز است.");
+            return Error.Validation("site.installments", "Anzahlung 0 bis 100 %, 1 bis 36 Raten und eine monatliche Gebühr von 0 bis 10 %.");
+        if (Serialize(value).Length > 200_000) return Error.Validation("site.size", "Der Inhalt ist zu groß.");
 
         var urls = ExtractUrls(value);
-        if (urls.Any(u => !IsSafeUrl(u))) return Error.Validation("site.url", "فقط آدرس‌های http(s) یا مسیرهای داخلی مجاز هستند.");
+        if (urls.Any(u => !IsSafeUrl(u))) return Error.Validation("site.url", "Erlaubt sind nur http(s)-Adressen oder interne Pfade.");
 
         var json = Serialize(value);
         var row = await db.SiteSettings.FirstOrDefaultAsync(s => s.Key == key, ct);
@@ -82,20 +82,20 @@ public sealed partial class SiteService(IAppDbContext db, IClock clock, ICurrent
 
         var steps = new List<OnboardingStep>
         {
-            new(1, "brand", "نام و لوگو", "نام فروشگاه، شعار و لوگو را وارد کنید تا بالای سایت نمایش داده شود.", "/admin/site/brand",
+            new(1, "brand", "Name und Logo", "Geben Sie Name, Slogan und Logo ein, damit sie oben auf der Website erscheinen.", "/admin/site/brand",
                 site.Brand.Name.Length > 0 && site.Brand.LogoUrl.Length > 0),
-            new(2, "theme", "رنگ‌ها و فونت", "رنگ اصلی برند و حالت روشن/تاریک را انتخاب کنید.", "/admin/site/theme", themeSaved),
-            new(3, "contact", "تماس و آدرس", "شماره تماس، آدرس مغازه، ساعات کاری و اینستاگرام.", "/admin/site/contact",
+            new(2, "theme", "Farben und Schrift", "Wählen Sie die Hauptfarbe Ihrer Marke und den hellen oder dunklen Modus.", "/admin/site/theme", themeSaved),
+            new(3, "contact", "Kontakt und Adresse", "Telefonnummer, Adresse des Geschäfts, Öffnungszeiten und Instagram.", "/admin/site/contact",
                 (site.Contact.Phone.Length > 0 || site.Contact.Mobile.Length > 0) && site.Contact.Address.Length > 0),
-            new(4, "pricing", "نرخ طلا و اجرت", "نرخ امروز هر گرم ۱۸ عیار، درصد سود و مالیات را ثبت کنید.", "/admin/pricing",
+            new(4, "pricing", "Goldkurs und Arbeitslohn", "Tragen Sie den heutigen Kurs pro Gramm 750er Gold sowie Gewinnaufschlag und Steuer ein.", "/admin/pricing",
                 await db.GoldRates.AnyAsync(ct) && await db.PricingSettings.AnyAsync(ct)),
-            new(5, "categories", "دسته‌بندی‌ها", "حداقل یک دسته بسازید (مثلاً انگشتر، دستبند).", "/admin/categories", await db.Categories.AnyAsync(ct)),
-            new(6, "branch", "شعبه", "مغازه یا شعبه‌ای که قطعه‌ها در آن موجود است.", "/admin/branches", await db.Branches.AnyAsync(ct)),
-            new(7, "product", "اولین محصول و قطعه", "یک محصول بسازید و یک قطعه با وزن واقعی ترازو اضافه کنید.", "/admin/products",
+            new(5, "categories", "Kategorien", "Legen Sie mindestens eine Kategorie an (z. B. Ringe, Armbänder).", "/admin/categories", await db.Categories.AnyAsync(ct)),
+            new(6, "branch", "Filiale", "Das Geschäft oder die Filiale, in der die Stücke vorrätig sind.", "/admin/branches", await db.Branches.AnyAsync(ct)),
+            new(7, "product", "Erstes Produkt und erstes Stück", "Legen Sie ein Produkt an und fügen Sie ein Stück mit dem echten Gewicht von der Waage hinzu.", "/admin/products",
                 await db.Pieces.AnyAsync(ct)),
-            new(8, "home", "صفحه‌ی اول", "عنوان، متن و عکس‌های اسکرولی صفحه‌ی اول را بگذارید.", "/admin/site/home",
+            new(8, "home", "Startseite", "Überschrift, Text und Scroll-Bilder der Startseite festlegen.", "/admin/site/home",
                 (site.Home.Hero?.Title.Length ?? 0) > 0 && (site.Home.Hero?.Images?.Count ?? 0) > 0),
-            new(9, "publish", "انتشار سایت", "همه‌چیز آماده است؟ سایت را برای مشتری‌ها باز کنید.", "/admin/site/publish", site.Publish.Published),
+            new(9, "publish", "Website veröffentlichen", "Alles bereit? Dann geben Sie die Website für Ihre Kunden frei.", "/admin/site/publish", site.Publish.Published),
         };
         var done = steps.Count(s => s.Done);
         return new OnboardingDto(steps, done * 100 / steps.Count, steps.FirstOrDefault(s => !s.Done), dismissed, done == steps.Count);
@@ -109,14 +109,14 @@ public sealed partial class SiteService(IAppDbContext db, IClock clock, ICurrent
     public async Task<Result<Unit>> InitAsync(SetupInitRequest req, string? configuredToken, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(configuredToken) || configuredToken.Length < 16)
-            return Error.Unavailable("setup.disabled", "راه‌اندازی اولیه فعال نیست (Setup:Token تنظیم نشده).");
+            return Error.Unavailable("setup.disabled", "Die Ersteinrichtung ist nicht aktiv (Setup:Token ist nicht gesetzt).");
         if (!hasher.Verify(req.SetupToken ?? "", hasher.Hash(configuredToken)))
-            return Error.Forbidden("setup.token", "کد نصب اشتباه است.");
+            return Error.Forbidden("setup.token", "Der Installationscode ist falsch.");
         if (!(await GetSetupStatusAsync(ct)).NeedsSetup)
-            return Error.Conflict("setup.done", "این سایت قبلاً راه‌اندازی شده است.");
+            return Error.Conflict("setup.done", "Diese Website wurde bereits eingerichtet.");
 
         var phone = Auth.AuthService.NormalizePhone(req.Phone);
-        if (!Auth.AuthService.IranMobile().IsMatch(phone)) return Error.Validation("phone.invalid", "شماره موبایل معتبر نیست.");
+        if (!Auth.AuthService.GermanMobile().IsMatch(phone)) return Error.Validation("phone.invalid", "Die Handynummer ist ungültig.");
 
         var existing = await db.Users.FirstOrDefaultAsync(u => u.Phone == phone, ct);
         if (existing is null) db.Users.Add(User.Create(phone, UserRole.Admin, req.FullName));

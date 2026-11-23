@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Trash2, Lock } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
 import { readCart, writeCart, type CartItem } from "@/lib/cart";
-import { toman, grams } from "@/lib/format";
+import { euro, grams } from "@/lib/format";
 import { useSite, useMe } from "@/components/site-provider";
 import { Button } from "@/components/ui/button";
 
@@ -59,10 +59,10 @@ export default function CartPage() {
           const line = quote?.lines.find((l) => l.pieceId === i.pieceId);
           return (
             <div key={i.pieceId} className="flex items-center justify-between gap-3 p-4">
-              <div><Link href={`/shop/${i.slug}`} className="font-semibold">{i.productName}</Link><p className="text-sm text-muted-foreground">{grams(i.grams)} گرم</p></div>
+              <div><Link href={`/shop/${i.slug}`} className="font-semibold">{i.productName}</Link><p className="text-sm text-muted-foreground">{grams(i.grams)} g</p></div>
               <div className="flex items-center gap-3">
-                <span className="num font-bold">{toman(line?.totalRial ?? i.priceRial)}</span>
-                {!quote && <button onClick={() => remove(i.pieceId)} aria-label="حذف" className="text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>}
+                <span className="num font-bold">{euro(line?.totalRial ?? i.priceRial)}</span>
+                {!quote && <button onClick={() => remove(i.pieceId)} aria-label="Entfernen" className="text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>}
               </div>
             </div>
           );
@@ -74,9 +74,9 @@ export default function CartPage() {
       ) : (
         <div className="space-y-4 rounded-[var(--radius)] border border-primary/50 bg-card p-5">
           <div className="flex items-center justify-between"><span>{t("cart.locked")}</span><b className="num text-xl text-primary" data-testid="quote-timer">{Math.floor(left / 60)}:{String(left % 60).padStart(2, "0")}</b></div>
-          <div className="flex items-center justify-between text-lg"><span>جمع کل</span><b className="num" data-testid="quote-total">{toman(quote.totalRial)} تومان</b></div>
-          <Button size="lg" className="w-full" onClick={pay} disabled={busy || left === 0} data-testid="pay">{left === 0 ? "قیمت منقضی شد — دوباره قفل کنید" : t("cart.pay")}</Button>
-          {left === 0 && <Button variant="outline" className="w-full" onClick={lock}>محاسبه‌ی دوباره</Button>}
+          <div className="flex items-center justify-between text-lg"><span>Gesamtsumme</span><b className="num" data-testid="quote-total">{euro(quote.totalRial)} €</b></div>
+          <Button size="lg" className="w-full" onClick={pay} disabled={busy || left === 0} data-testid="pay">{left === 0 ? "Preis abgelaufen – bitte erneut sichern" : t("cart.pay")}</Button>
+          {left === 0 && <Button variant="outline" className="w-full" onClick={lock}>Neu berechnen</Button>}
         </div>
       )}
     </div>

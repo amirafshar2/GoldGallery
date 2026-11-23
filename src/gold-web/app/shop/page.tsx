@@ -9,9 +9,9 @@ import { ProductCardView, type ProductCard } from "@/components/product-card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const AUDIENCES = [["", "همه"], ["1", "زنانه"], ["2", "مردانه"], ["3", "کودکانه"]];
-const COLORS = [["", "همه"], ["1", "زرد"], ["2", "سفید"], ["3", "رزگلد"]];
-const SORTS = [["popular", "محبوب‌ترین"], ["newest", "جدیدترین"], ["cheapest", "ارزان‌ترین"], ["expensive", "گران‌ترین"], ["low-wage", "کم‌اجرت‌ترین"], ["lightest", "سبک‌ترین"]];
+const AUDIENCES = [["", "Alle"], ["1", "Damen"], ["2", "Herren"], ["3", "Kinder"]];
+const COLORS = [["", "Alle"], ["1", "Gelbgold"], ["2", "Weißgold"], ["3", "Roségold"]];
+const SORTS = [["popular", "Beliebteste"], ["newest", "Neueste"], ["cheapest", "Günstigste"], ["expensive", "Teuerste"], ["low-wage", "Niedrigster Arbeitslohn"], ["lightest", "Leichteste"]];
 
 function ShopInner() {
   const { t } = useSite();
@@ -45,7 +45,7 @@ function ShopInner() {
       <h1 className="mb-8 text-4xl font-light sm:text-5xl">{t("shop.title")}</h1>
       <div className="mb-8 grid gap-4 rounded-[var(--radius)] border bg-card p-4">
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => set("category", "")} className={`rounded-full border px-3 py-1.5 text-sm ${!q.category ? "border-primary text-primary" : ""}`}>همه‌ی دسته‌ها</button>
+          <button onClick={() => set("category", "")} className={`rounded-full border px-3 py-1.5 text-sm ${!q.category ? "border-primary text-primary" : ""}`}>Alle Kategorien</button>
           {cats.map((c) => <button key={c.slug} onClick={() => set("category", c.slug)} className={`rounded-full border px-3 py-1.5 text-sm ${q.category === c.slug ? "border-primary text-primary" : ""}`}>{c.name}</button>)}
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -56,10 +56,10 @@ function ShopInner() {
           </select>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <Input placeholder="جستجو…" defaultValue={q.search ?? ""} onBlur={(e) => set("search", e.target.value)} />
-          <Input placeholder="حداقل وزن (گرم)" inputMode="decimal" defaultValue={q.minGrams ?? ""} onBlur={(e) => set("minGrams", e.target.value)} />
-          <Input placeholder="حداکثر وزن (گرم)" inputMode="decimal" defaultValue={q.maxGrams ?? ""} onBlur={(e) => set("maxGrams", e.target.value)} />
-          <Input placeholder="بودجه تا (تومان)" inputMode="numeric" defaultValue={q.maxPriceRial ? String(Number(q.maxPriceRial) / 10) : ""} onBlur={(e) => set("maxPriceRial", e.target.value ? String(Number(e.target.value) * 10) : "")} />
+          <Input placeholder="Suchen…" defaultValue={q.search ?? ""} onBlur={(e) => set("search", e.target.value)} />
+          <Input placeholder="Mindestgewicht (g)" inputMode="decimal" defaultValue={q.minGrams ?? ""} onBlur={(e) => set("minGrams", e.target.value)} />
+          <Input placeholder="Höchstgewicht (g)" inputMode="decimal" defaultValue={q.maxGrams ?? ""} onBlur={(e) => set("maxGrams", e.target.value)} />
+          <Input placeholder="Budget bis (€)" inputMode="numeric" defaultValue={q.maxPriceRial ? String(Number(q.maxPriceRial) / 100) : ""} onBlur={(e) => set("maxPriceRial", e.target.value ? String(Number(e.target.value) * 10) : "")} />
         </div>
       </div>
       {!data ? (

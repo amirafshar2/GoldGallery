@@ -46,7 +46,7 @@ public static class PricingEngine
             Money.FromRial(rounded));
     }
 
-    /// <summary>Old gold purchase: weight × buy-rate × karat/750, rounded down to whole rial. No wage.</summary>
+    /// <summary>Old gold purchase: weight × buy-rate × karat/750, rounded down to whole cents. No wage.</summary>
     public static BuyBackValuation CalculateBuyBack(Weight weight, Karat karat, Money buyRatePerGram18)
     {
         if (weight.IsZero) throw new DomainException("Gold weight must be greater than zero.");

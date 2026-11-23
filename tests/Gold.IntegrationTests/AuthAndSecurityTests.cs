@@ -52,8 +52,8 @@ public class AuthAndSecurityTests : IDisposable
     public async Task WrongOtp_Unauthorized()
     {
         var c = _app.Client();
-        await c.PostAsJsonAsync("/api/v1/auth/otp/request", new { phone = "09121112233" });
-        var res = await c.PostAsJsonAsync("/api/v1/auth/otp/verify", new { phone = "09121112233", code = "00000" });
+        await c.PostAsJsonAsync("/api/v1/auth/otp/request", new { phone = "015121112233" });
+        var res = await c.PostAsJsonAsync("/api/v1/auth/otp/verify", new { phone = "015121112233", code = "00000" });
         Assert.Equal(HttpStatusCode.Unauthorized, res.StatusCode);
     }
 

@@ -19,8 +19,8 @@ public sealed record CreateOrderRequest(Guid QuoteId);
 public sealed record OrderItemDto(Guid PieceId, string ProductName, decimal GoldGrams, long PriceRial);
 public sealed record OrderDto(Guid Id, string Number, string Status, long TotalRial, DateTimeOffset CreatedAt, IReadOnlyList<OrderItemDto> Items);
 public sealed record ChangeOrderStatusRequest(OrderStatus Status);
-public sealed record BuyBackRequest(decimal? Grams, decimal? Mesghal, int Karat);
-public sealed record BuyBackDto(decimal Grams, decimal Mesghal, int Karat, long BuyRatePerGram18Rial, long ValueRial);
+public sealed record BuyBackRequest(decimal? Grams, decimal? Ounces, int Karat);
+public sealed record BuyBackDto(decimal Grams, decimal Ounces, int Karat, long BuyRatePerGram18Rial, long ValueRial);
 
 public sealed class OrderService(IAppDbContext db, IClock clock, ICurrentUser user, RateService rates, RateGuard guard)
 {
@@ -30,19 +30,19 @@ public sealed class OrderService(IAppDbContext db, IClock clock, ICurrentUser us
 
     public async Task<Result<QuoteDto>> CreateQuoteAsync(CreateQuoteRequest req, CancellationToken ct)
     {
-        if (user.Id is not { } userId) return Error.Unauthorized("auth.required", "ابتدا وارد شوید.");
+        if (user.Id is not { } userId) return Error.Unauthorized("auth.required", "Bitte zuerst anmelden.");
         var ids = req.PieceIds.Distinct().ToList();
-        if (ids.Count is 0 or > 10) return Error.Validation("quote.pieces", "بین ۱ تا ۱۰ قطعه انتخاب کنید.");
+        if (ids.Count is 0 or > 10) return Error.Validation("quote.pieces", "Bitte 1 bis 10 Stücke auswählen.");
 
         var (rate, prev) = await rates.GetLatestTwoAsync(ct);
         if (rate is null || !guard.CanSellOnline(rate, prev, clock.Now))
-            return Error.Unavailable("rate.unhealthy", "نرخ طلا در حال به‌روزرسانی است؛ فروش آنلاین موقتاً متوقف است. لطفاً تماس بگیرید یا رزرو حضوری کنید.");
+            return Error.Unavailable("rate.unhealthy", "Der Goldkurs wird gerade aktualisiert, der Onlineverkauf ist kurz pausiert. Bitte rufen Sie uns an oder reservieren Sie im Geschäft.");
 
         var pieces = await db.Pieces.AsNoTracking().Where(p => ids.Contains(p.Id))
             .Select(p => new { p.Id, p.Status, p.GoldWeightMg, p.KaratPerMille, p.StoneValueRial, ProductName = p.Product!.Name, p.Product.WageKind, p.Product.WageValue })
             .ToListAsync(ct);
-        if (pieces.Count != ids.Count) return Error.NotFound("quote.pieceNotFound", "یکی از قطعه‌ها پیدا نشد.");
-        if (pieces.Any(p => p.Status != PieceStatus.Available)) return Error.Conflict("quote.pieceUnavailable", "یکی از قطعه‌ها دیگر موجود نیست.");
+        if (pieces.Count != ids.Count) return Error.NotFound("quote.pieceNotFound", "Eines der Stücke wurde nicht gefunden.");
+        if (pieces.Any(p => p.Status != PieceStatus.Available)) return Error.Conflict("quote.pieceUnavailable", "Eines der Stücke ist nicht mehr verfügbar.");
 
         var policy = await rates.GetPolicyAsync(ct);
         var lines = pieces.Select(p =>
@@ -62,9 +62,9 @@ public sealed class OrderService(IAppDbContext db, IClock clock, ICurrentUser us
 
     public async Task<Result<OrderDto>> CreateOrderAsync(CreateOrderRequest req, CancellationToken ct)
     {
-        if (user.Id is not { } userId) return Error.Unauthorized("auth.required", "ابتدا وارد شوید.");
+        if (user.Id is not { } userId) return Error.Unauthorized("auth.required", "Bitte zuerst anmelden.");
         var quote = await db.PriceQuotes.FirstOrDefaultAsync(q => q.Id == req.QuoteId && q.UserId == userId, ct);
-        if (quote is null) return Error.NotFound("quote.notFound", "پیش‌فاکتور پیدا نشد.");
+        if (quote is null) return Error.NotFound("quote.notFound", "Angebot nicht gefunden.");
 
         try { quote.Consume(clock.Now); }
         catch (DomainException ex) { return Error.Conflict("quote.expired", ex.Message); }
@@ -72,7 +72,7 @@ public sealed class OrderService(IAppDbContext db, IClock clock, ICurrentUser us
         var lines = JsonSerializer.Deserialize<List<QuoteLineDto>>(quote.BreakdownJson, Json)!;
         var pieces = await db.Pieces.Where(p => quote.PieceIds.Contains(p.Id)).ToListAsync(ct);
         try { pieces.ForEach(p => p.Reserve()); }
-        catch (DomainException ex) { return Error.Conflict("piece.taken", "این قطعه همین الان توسط مشتری دیگری رزرو شد. " + ex.Message); }
+        catch (DomainException ex) { return Error.Conflict("piece.taken", "Dieses Stück wurde gerade von einem anderen Kunden reserviert. " + ex.Message); }
 
         var number = $"G-{clock.Now:yyMMdd}-{Random.Shared.Next(100000, 999999)}";
         var order = Order.FromQuote(quote, number, lines.Select(l => (l.PieceId, l.TotalRial)));
@@ -82,7 +82,7 @@ public sealed class OrderService(IAppDbContext db, IClock clock, ICurrentUser us
         try { await db.SaveChangesAsync(ct); }
         catch (DbUpdateException) // concurrency stamp mismatch or unique active-piece index violation
         {
-            return Error.Conflict("piece.taken", "این قطعه همین الان توسط مشتری دیگری رزرو شد.");
+            return Error.Conflict("piece.taken", "Dieses Stück wurde gerade von einem anderen Kunden reserviert.");
         }
         return ToDto(order, lines.ToDictionary(l => l.PieceId));
     }
@@ -100,14 +100,14 @@ public sealed class OrderService(IAppDbContext db, IClock clock, ICurrentUser us
         var q = db.Orders.Where(o => o.Id == id);
         if (user.Role is UserRole.Customer or UserRole.Wholesale) q = q.Where(o => o.UserId == user.Id); // IDOR guard
         var list = await ListAsync(q, ct);
-        return list.Count == 0 ? Error.NotFound("order.notFound", "سفارش پیدا نشد.") : list[0];
+        return list.Count == 0 ? Error.NotFound("order.notFound", "Bestellung nicht gefunden.") : list[0];
     }
 
     public async Task<Result<OrderDto>> ChangeStatusAsync(Guid id, ChangeOrderStatusRequest req, CancellationToken ct)
     {
         var order = await db.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id == id, ct);
-        if (order is null) return Error.NotFound("order.notFound", "سفارش پیدا نشد.");
-        if (req.Status is OrderStatus.Paid) return Error.Validation("order.paidByGateway", "وضعیت «پرداخت‌شده» فقط از طریق تأیید درگاه ثبت می‌شود.");
+        if (order is null) return Error.NotFound("order.notFound", "Bestellung nicht gefunden.");
+        if (req.Status is OrderStatus.Paid) return Error.Validation("order.paidByGateway", "Der Status „Bezahlt“ wird nur durch die Bestätigung des Zahlungsanbieters gesetzt.");
         var from = order.Status;
         try { order.MoveTo(req.Status); }
         catch (DomainException ex) { return Error.Conflict("order.transition", ex.Message); }
@@ -142,12 +142,12 @@ public sealed class OrderService(IAppDbContext db, IClock clock, ICurrentUser us
     public async Task<Result<BuyBackDto>> EstimateBuyBackAsync(BuyBackRequest req, CancellationToken ct)
     {
         var (rate, _) = await rates.GetLatestTwoAsync(ct);
-        if (rate is null) return Error.Unavailable("rate.missing", "نرخ روز هنوز ثبت نشده است.");
+        if (rate is null) return Error.Unavailable("rate.missing", "Der Tageskurs wurde noch nicht erfasst.");
         try
         {
-            var w = req.Mesghal is { } m ? Weight.FromMesghal(m) : Weight.FromGrams(req.Grams ?? 0);
+            var w = req.Ounces is { } m ? Weight.FromTroyOunces(m) : Weight.FromGrams(req.Grams ?? 0);
             var v = PricingEngine.CalculateBuyBack(w, Karat.FromPerMille(req.Karat), rate.BuyPerGram18);
-            return new BuyBackDto(w.Grams, decimal.Round(w.Mesghal, 3), req.Karat, rate.BuyPerGram18.Rial, v.Value.Rial);
+            return new BuyBackDto(w.Grams, decimal.Round(w.TroyOunces, 3), req.Karat, rate.BuyPerGram18.Rial, v.Value.Rial);
         }
         catch (DomainException ex) { return Error.Validation("buyback.invalid", ex.Message); }
     }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, Receipt, RefreshCw, Wrench, Truck, ShieldCheck, Sparkles, Scale, MapPin } from "lucide-react";
+import { ArrowRight, Receipt, RefreshCw, Wrench, Truck, ShieldCheck, Sparkles, Scale, MapPin } from "lucide-react";
 import { useSite } from "./site-provider";
 import { ZoomParallax } from "./slots/zoom-parallax";
 import { HorizontalGallery } from "./gallery/horizontal-gallery";
@@ -38,13 +38,13 @@ export function HomeView({ products, categories }: { products: ProductCard[]; ca
     "rate-ticker": (title) => <RateBand title={title} />,
     categories: (title) => categories.length > 0 && (
       <section className="space-y-6">
-        <Heading eyebrow="مجموعه‌ها" title={title} />
+        <Heading eyebrow="Kollektionen" title={title} />
         <div className="relative" dir="ltr">
           <Marquee pauseOnHover className="[--duration:45s] [--gap:1rem]">
             {categories.map((c) => {
               const img = catImage(c.name);
               return (
-                <Link key={c.id} href={`/shop?category=${c.slug}`} dir="rtl" className="group flex w-36 flex-col items-center gap-3 sm:w-52">
+                <Link key={c.id} href={`/shop?category=${c.slug}`} className="group flex w-36 flex-col items-center gap-3 sm:w-52">
                   <div className="relative aspect-square w-full overflow-hidden rounded-full bg-velvet ring-1 ring-border transition-all duration-500 group-hover:ring-2 group-hover:ring-primary">
                     {img ? <img src={img} alt="" loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       : <Sparkles className="absolute inset-0 m-auto size-10 text-gold-hi" />}
@@ -61,23 +61,23 @@ export function HomeView({ products, categories }: { products: ProductCard[]; ca
     ),
     "new-arrivals": (title) => products.length > 0 && (
       <section className="mx-auto max-w-7xl px-4">
-        <Heading eyebrow="تازه‌های ویترین" title={title} link={{ href: "/shop?sort=newest", label: "مشاهده‌ی همه" }} />
+        <Heading eyebrow="Neu in der Vitrine" title={title} link={{ href: "/shop?sort=newest", label: "Alle ansehen" }} />
         <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-4">
           {products.slice(0, 8).map((p, i) => <ProductCardView key={p.id} p={p} index={i} />)}
         </div>
       </section>
     ),
-    gallery: (title, sub) => featured.length >= 3 && <HorizontalGallery eyebrow={sub || "کلکسیون"} title={title} items={featured} />,
+    gallery: (title, sub) => featured.length >= 3 && <HorizontalGallery eyebrow={sub || "Kollektion"} title={title} items={featured} />,
     story: (title, sub) => <Story title={title} text={sub} image={heroImages[4] ?? heroImages[0]} />,
     "custom-order": (title, sub) => site.features.customOrder && (
-      <Cta title={title} text={sub || "طرح یا عکس دلخواهت را بفرست؛ پیش‌فاکتور با وزن و اجرت شفاف می‌گیری."} href="/contact" icon={<Sparkles className="size-7" />} image={heroImages[5]} />
+      <Cta title={title} text={sub || "Schicken Sie uns Ihre Idee oder ein Foto; Sie erhalten ein Angebot mit klarem Gewicht und Arbeitslohn."} href="/contact" icon={<Sparkles className="size-7" />} image={heroImages[5]} />
     ),
     "buy-back": (title, sub) => site.features.buyBack && (
-      <Cta title={title} text={sub || "ارزش طلای کهنه‌ات را با نرخ روز حساب کن و نوبت ارزیابی حضوری بگیر."} href="/sell-old-gold" icon={<Scale className="size-7" />} image={heroImages[6]} />
+      <Cta title={title} text={sub || "Berechnen Sie den Wert Ihres Altgolds zum Tageskurs und vereinbaren Sie einen Termin zur Bewertung."} href="/sell-old-gold" icon={<Scale className="size-7" />} image={heroImages[6]} />
     ),
     trust: (title) => site.trust.badges.length > 0 && (
       <section className="mx-auto max-w-7xl px-4">
-        <Heading eyebrow="تعهد ما" title={title} />
+        <Heading eyebrow="Unser Versprechen" title={title} />
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius)] border bg-border lg:grid-cols-4">
           {site.trust.badges.map((b, i) => { const I = ICONS[b.icon] ?? ShieldCheck; return (
             <BlurFade key={b.title} delay={i * 0.08} inView className="bg-card p-6 sm:p-8">
@@ -92,7 +92,7 @@ export function HomeView({ products, categories }: { products: ProductCard[]; ca
     installments: (title) => <InstallmentsBlock title={title} />,
     contact: (title) => (site.contact.address || site.contact.phone) && (
       <section className="mx-auto max-w-7xl px-4">
-        <Heading eyebrow="به ویترین ما سر بزنید" title={title} />
+        <Heading eyebrow="Besuchen Sie unsere Vitrine" title={title} />
         <div className="flex flex-col gap-4 rounded-[var(--radius)] border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3"><MapPin className="mt-1 size-5 text-primary" /><div><p>{site.contact.address}</p><p className="text-sm text-muted-foreground">{site.contact.workingHours}</p></div></div>
           {site.contact.phone && <a href={`tel:${site.contact.phone}`} className="num text-lg font-bold text-primary">{site.contact.phone}</a>}
@@ -113,11 +113,11 @@ export function HomeView({ products, categories }: { products: ProductCard[]; ca
           {hero.ctaText && (
             <Link href={hero.ctaLink || "/shop"} className="inline-block">
               <ShimmerButton background="var(--brand-primary)" shimmerColor="#F3D58A" borderRadius="999px" className="px-8 py-3.5 font-semibold">
-                {hero.ctaText} <ArrowLeft className="ms-2 size-4" />
+                {hero.ctaText} <ArrowRight className="ms-2 size-4" />
               </ShimmerButton>
             </Link>
           )}
-          <p className="text-xs tracking-widest text-velvet-muted">اسکرول کنید ↓</p>
+          <p className="text-xs tracking-widest text-velvet-muted">Scrollen ↓</p>
         </div>
       </ZoomParallax>
       <div className="space-y-20 py-16 sm:space-y-28 sm:py-20">
@@ -134,7 +134,7 @@ function Heading({ eyebrow, title, link }: { eyebrow?: string; title: string; li
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h2 className="mt-2 text-3xl font-light sm:text-5xl">{title}</h2>
       </div>
-      {link && <Link href={link.href} className="group flex shrink-0 items-center gap-1 border-b border-primary/40 pb-1 text-sm text-primary">{link.label}<ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" /></Link>}
+      {link && <Link href={link.href} className="group flex shrink-0 items-center gap-1 border-b border-primary/40 pb-1 text-sm text-primary">{link.label}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link>}
     </BlurFade>
   );
 }
@@ -149,17 +149,17 @@ function RateBand({ title }: { title: string }) {
           <div>
             <p className="eyebrow flex items-center gap-2">
               <span className="relative flex size-2"><span className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${rate.canSellOnline ? "bg-emerald-500" : "bg-amber-500"}`} /><span className={`relative inline-flex size-2 rounded-full ${rate.canSellOnline ? "bg-emerald-500" : "bg-amber-500"}`} /></span>
-              زنده
+              live
             </p>
             <h2 className="mt-2 text-2xl font-light sm:text-3xl">{title}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">هر گرم طلای ۱۸ عیار — قیمت همه‌ی محصولات با همین نرخ ساخته می‌شود.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Pro Gramm 750er Gold – alle Produktpreise werden mit diesem Kurs berechnet.</p>
           </div>
           <div className="flex items-baseline gap-2">
-            <NumberTicker value={Math.round(rate.sellPerGram18Rial / 10)} locale="fa-IR" className="num text-4xl font-extrabold text-primary sm:text-6xl" />
-            <span className="text-muted-foreground">تومان</span>
+            <NumberTicker value={rate.sellPerGram18Rial / 100} decimalPlaces={2} locale="de-DE" className="num text-4xl font-extrabold text-primary sm:text-6xl" />
+            <span className="text-muted-foreground">€</span>
           </div>
         </div>
-        <Link href="/price" className="mt-6 inline-flex items-center gap-1 text-sm text-primary">محاسبه‌گر قیمت <ArrowLeft className="size-4" /></Link>
+        <Link href="/price" className="mt-6 inline-flex items-center gap-1 text-sm text-primary">Preisrechner <ArrowRight className="size-4" /></Link>
         <BorderBeam size={140} duration={10} colorFrom="#F3D58A" colorTo="#8E6B2F" />
       </div>
     </section>
@@ -176,10 +176,10 @@ function Story({ title, text, image }: { title: string; text: string; image?: st
         {image && <motion.img style={{ y }} src={image} alt="" loading="lazy" className="absolute inset-0 h-[124%] w-full -translate-y-[12%] object-cover" />}
       </div>
       <BlurFade inView className="space-y-6">
-        <p className="eyebrow">داستان ما</p>
+        <p className="eyebrow">Unsere Geschichte</p>
         <h2 className="text-3xl font-light leading-[1.5] sm:text-5xl">{title}</h2>
         {text && <p className="max-w-lg leading-8 text-muted-foreground">{text}</p>}
-        <Link href="/shop" className="group inline-flex items-center gap-2 border-b border-primary pb-1 text-primary">دیدن مجموعه <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" /></Link>
+        <Link href="/shop" className="group inline-flex items-center gap-2 border-b border-primary pb-1 text-primary">Kollektion ansehen <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link>
       </BlurFade>
     </section>
   );
@@ -195,7 +195,7 @@ function Cta({ title, text, href, icon, image }: { title: string; text: string; 
           <div className="text-gold-hi">{icon}</div>
           <h2 className="text-3xl font-light sm:text-4xl">{title}</h2>
           <p className="leading-8 text-velvet-muted">{text}</p>
-          <span className="inline-flex items-center gap-2 text-gold-hi">شروع کنید <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-2" /></span>
+          <span className="inline-flex items-center gap-2 text-gold-hi">Jetzt starten <ArrowRight className="size-4 transition-transform group-hover:translate-x-2" /></span>
         </div>
       </Link>
     </BlurFade>

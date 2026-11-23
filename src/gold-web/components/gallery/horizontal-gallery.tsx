@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { toman } from "@/lib/format";
+import { euro } from "@/lib/format";
 import type { ProductCard } from "../product-card";
 
 export function HorizontalGallery({ eyebrow, title, items }: { eyebrow: string; title: string; items: ProductCard[] }) {
@@ -36,7 +36,7 @@ export function HorizontalGallery({ eyebrow, title, items }: { eyebrow: string; 
         <div className="absolute inset-x-0 bottom-0 p-5 text-white">
           <p className="text-xs text-white/70">{p.categoryName}</p>
           <h3 className="mt-1 text-xl font-semibold">{p.name}</h3>
-          <p className="mt-2 text-sm text-white/80">از <span className="num">{toman(p.startingFromRial)}</span> تومان</p>
+          <p className="mt-2 text-sm text-white/80">von <span className="num">{euro(p.startingFromRial)}</span> €</p>
         </div>
       </div>
     </Link>

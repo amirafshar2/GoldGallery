@@ -15,18 +15,18 @@ public sealed class PaymentService(IAppDbContext db, IClock clock, ICurrentUser 
     public async Task<Result<StartPaymentResult>> StartAsync(Guid orderId, string? idempotencyKey, string callbackBaseUrl, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(idempotencyKey) || idempotencyKey.Length > 100)
-            return Error.Validation("payment.idempotencyKey", "هدر Idempotency-Key الزامی است.");
+            return Error.Validation("payment.idempotencyKey", "Der Header Idempotency-Key ist erforderlich.");
 
         var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == user.Id, ct);
-        if (order is null) return Error.NotFound("order.notFound", "سفارش پیدا نشد.");
+        if (order is null) return Error.NotFound("order.notFound", "Bestellung nicht gefunden.");
 
         var existing = await db.Payments.FirstOrDefaultAsync(p => p.IdempotencyKey == idempotencyKey, ct);
         if (existing is not null)
         {
-            if (existing.OrderId != orderId) return Error.Conflict("payment.keyReused", "این کلید برای سفارش دیگری استفاده شده است.");
+            if (existing.OrderId != orderId) return Error.Conflict("payment.keyReused", "Dieser Schlüssel wurde bereits für eine andere Bestellung verwendet.");
             return new StartPaymentResult(existing.Id, $"{callbackBaseUrl}?paymentId={existing.Id}&token={existing.GatewayToken}", existing.AmountRial);
         }
-        if (order.Status != OrderStatus.AwaitingPayment) return Error.Conflict("order.notPayable", "این سفارش قابل پرداخت نیست.");
+        if (order.Status != OrderStatus.AwaitingPayment) return Error.Conflict("order.notPayable", "Diese Bestellung kann nicht bezahlt werden.");
 
         // Amount ALWAYS from the database, never from the client.
         var payment = Payment.Start(order.Id, order.TotalRial, gateway.Name, idempotencyKey);
@@ -43,7 +43,7 @@ public sealed class PaymentService(IAppDbContext db, IClock clock, ICurrentUser 
     public async Task<Result<PaymentOutcome>> HandleCallbackAsync(Guid paymentId, CancellationToken ct)
     {
         var payment = await db.Payments.FirstOrDefaultAsync(p => p.Id == paymentId, ct);
-        if (payment is null) return Error.NotFound("payment.notFound", "پرداخت پیدا نشد.");
+        if (payment is null) return Error.NotFound("payment.notFound", "Zahlung nicht gefunden.");
         if (payment.Status != PaymentStatus.Pending)
             return new PaymentOutcome(payment.Id, payment.OrderId, payment.Status.ToString(), payment.TrackingCode);
 

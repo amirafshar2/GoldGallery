@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
 import { api } from "@/lib/api";
-import { toman, faNum } from "@/lib/format";
+import { euro, num } from "@/lib/format";
 import { useMe } from "@/components/site-provider";
 import { useOnboarding } from "@/components/admin/onboarding";
 
@@ -20,15 +20,15 @@ export default function Dashboard() {
   const paid = orders.filter((o) => ["Paid", "Packed", "Shipped", "PickedUp", "Delivered"].includes(o.status));
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold">سلام {me?.fullName || ""} 👋</h1>
+      <h1 className="text-2xl font-extrabold">Hallo {me?.fullName || ""} 👋</h1>
       <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label="سفارش‌ها" value={faNum(orders.length)} />
-        <Stat label="پرداخت‌شده" value={faNum(paid.length)} />
-        {ledger && <Stat label="موجودی دفتر ریالی (تومان)" value={toman(ledger.balanceRial)} />}
+        <Stat label="Bestellungen" value={num(orders.length)} />
+        <Stat label="Bezahlt" value={num(paid.length)} />
+        {ledger && <Stat label="Kontostand (€)" value={euro(ledger.balanceRial)} />}
       </div>
       {ob && me?.role === "Admin" && (
         <section className="rounded-[var(--radius)] border bg-card p-5" data-testid="dashboard-checklist">
-          <div className="mb-3 flex items-center justify-between"><h2 className="font-bold">راه‌اندازی سایت</h2><b className="num text-primary">{faNum(ob.percent)}٪</b></div>
+          <div className="mb-3 flex items-center justify-between"><h2 className="font-bold">Website einrichten</h2><b className="num text-primary">{num(ob.percent)} %</b></div>
           <div className="grid gap-2 sm:grid-cols-3">
             {ob.steps.map((s) => (
               <Link key={s.key} href={s.adminLink} className="flex items-start gap-2 rounded-xl border p-3 hover:border-primary">

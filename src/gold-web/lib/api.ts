@@ -47,7 +47,7 @@ export async function api<T = unknown>(path: string, init: RequestInit & { json?
   const body = text ? JSON.parse(text) : undefined;
   if (!res.ok) {
     const errs = body?.errors ? Object.values(body.errors).flat().join(" ") : "";
-    throw new ApiError(res.status, [body?.title, errs].filter(Boolean).join(" — ") || "خطا", body);
+    throw new ApiError(res.status, [body?.title, errs].filter(Boolean).join(" — ") || "Fehler", body);
   }
   return body as T;
 }

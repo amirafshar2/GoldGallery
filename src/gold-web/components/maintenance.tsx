@@ -15,9 +15,9 @@ export function Maintenance({ children }: { children: React.ReactNode }) {
     <div className="grid min-h-screen place-items-center p-6 text-center">
       <div className="space-y-4">
         {site.brand.logoUrl && <img src={site.brand.logoUrl} alt="" className="mx-auto h-16 w-auto" />}
-        <h1 className="text-2xl font-extrabold gold-text">{site.brand.name || "به‌زودی"}</h1>
+        <h1 className="text-2xl font-extrabold gold-text">{site.brand.name || "Bald für Sie da"}</h1>
         <p className="text-muted-foreground">{site.publish.maintenanceMessage}</p>
-        <a href="/login" className="text-sm underline text-muted-foreground">ورود مدیر</a>
+        <a href="/login" className="text-sm underline text-muted-foreground">Admin-Anmeldung</a>
       </div>
     </div>
   );

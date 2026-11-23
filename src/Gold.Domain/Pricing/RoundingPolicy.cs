@@ -12,7 +12,7 @@ public enum RoundingDirection
 
 /// <summary>
 /// Final-price rounding, applied ONCE after all components are summed.
-/// Example: increment 10_000 rial = round to the nearest 1,000 toman.
+/// Example: increment 100 cents = round to whole euros.
 /// </summary>
 public sealed record RoundingPolicy
 {

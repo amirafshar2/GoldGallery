@@ -23,18 +23,18 @@ public sealed record HomeSection(HeroSection? Hero = null, IReadOnlyList<HomeBlo
 {
     public static readonly IReadOnlyList<HomeBlock> DefaultBlocks =
     [
-        new("rate-ticker", true, 1, "قیمت لحظه‌ای طلا"),
-        new("categories", true, 2, "دسته‌بندی‌ها"),
-        new("new-arrivals", true, 3, "جدیدترین‌ها"),
-        new("owner", true, 4, "مشاور شما", "قبل از خرید، با کسی حرف بزنید که بازار را می‌شناسد"),
-        new("gallery", true, 5, "کلکسیون منتخب", "با اسکرول، ویترین را ورق بزنید"),
-        new("installments", true, 6, "طلا بخرید، قسطی بپردازید"),
-        new("story", true, 7, "ساخته‌شده با دست، سنجیده با ترازو", "هر قطعه وزن واقعی، عیار تضمینی و اجرت شفاف دارد. قیمت را از نرخ لحظه‌ای می‌سازیم، نه از حدس."),
-        new("custom-order", true, 8, "طلای دلخواهت رو بساز"),
-        new("buy-back", true, 9, "طلای کهنه‌ات را عوض کن"),
-        new("trust", true, 10, "چرا ما؟"),
-        new("testimonials", false, 11, "رضایت مشتریان"),
-        new("contact", true, 12, "ویترین و آدرس"),
+        new("rate-ticker", true, 1, "Goldpreis aktuell"),
+        new("categories", true, 2, "Kategorien"),
+        new("new-arrivals", true, 3, "Neuheiten"),
+        new("owner", true, 4, "Ihr Berater", "Vor dem Kauf mit jemandem sprechen, der den Markt kennt"),
+        new("gallery", true, 5, "Ausgewählte Kollektion", "Durch die Vitrine scrollen"),
+        new("installments", true, 6, "Gold kaufen, in Raten zahlen"),
+        new("story", true, 7, "Von Hand gefertigt, auf der Waage geprüft", "Jedes Stück hat ein echtes Gewicht, garantierten Feingehalt und einen offenen Arbeitslohn. Den Preis berechnen wir aus dem Tageskurs, nicht aus dem Bauchgefühl."),
+        new("custom-order", true, 8, "Ihr Wunschschmuck nach Maß"),
+        new("buy-back", true, 9, "Altgold eintauschen"),
+        new("trust", true, 10, "Warum wir?"),
+        new("testimonials", false, 11, "Kundenstimmen"),
+        new("contact", true, 12, "Geschäft und Anfahrt"),
     ];
 }
 
@@ -55,7 +55,7 @@ public sealed record FeaturesSection(
 /// <summary>Overrides for any UI label (key → text). The frontend has defaults; admin can change any of them.</summary>
 public sealed record TextsSection(IReadOnlyDictionary<string, string>? Values = null);
 
-public sealed record PublishSection(bool Published = false, string MaintenanceMessage = "به‌زودی باز می‌شویم.");
+public sealed record PublishSection(bool Published = false, string MaintenanceMessage = "Wir sind bald für Sie da.");
 
 public sealed record OnboardingPrefs(bool Dismissed = false);
 
@@ -69,12 +69,12 @@ public sealed record OwnerSection(
     bool Enabled = false, string Name = "", string Role = "", string PhotoUrl = "", string Quote = "",
     IReadOnlyList<string>? Highlights = null, string Instagram = "", string Followers = "",
     IReadOnlyList<OwnerReel>? Reels = null, IReadOnlyList<OwnerTip>? Tips = null,
-    string CtaText = "مشاوره‌ی رایگان در واتساپ");
+    string CtaText = "Kostenlose Beratung per WhatsApp");
 
 /// <summary>Installment purchase terms (e.g. ¼ down payment, rest in N interest-free monthly payments).</summary>
 public sealed record InstallmentsSection(
     bool Enabled = false, long MaxRial = 3_000_000_000, int DownPercent = 25, int Months = 5, int MonthlyFeePercent = 0,
-    string Title = "خرید اقساطی طلا", string Note = "");
+    string Title = "Gold auf Raten", string Note = "");
 
 public sealed record SiteDto(
     BrandSection Brand, ThemeSection Theme, ContactSection Contact, LegalSection Legal, HomeSection Home,

@@ -69,15 +69,15 @@ public static class OrderEndpoints
             if (!FakePaymentGateway.Transactions.TryGetValue(token, out var tx)) return Results.NotFound();
             var t = WebUtility.HtmlEncode(token);
             var html = $$"""
-                <!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-                <title>درگاه آزمایشی</title>
+                <!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+                <title>Test-Zahlung</title>
                 <body style="font-family:system-ui;background:#0B0A08;color:#F4EFE6;display:grid;place-items:center;min-height:100vh;margin:0">
                 <main style="background:#15130f;border:1px solid #C9A24A;border-radius:16px;padding:24px;max-width:360px;width:calc(100% - 32px)">
-                <h1 style="color:#e8c877;font-size:20px">درگاه پرداخت آزمایشی</h1>
-                <p>مبلغ: <b id="amount">{{tx.Amount / 10:N0}}</b> تومان</p>
-                <form method="post" action="/dev/fake-gateway/{{t}}/paid"><button id="pay" style="width:100%;padding:12px;margin:6px 0;background:#C9A24A;border:0;border-radius:10px">پرداخت موفق</button></form>
-                <form method="post" action="/dev/fake-gateway/{{t}}/cancelled"><button id="cancel" style="width:100%;padding:12px;margin:6px 0;border-radius:10px">انصراف</button></form>
-                <form method="post" action="/dev/fake-gateway/{{t}}/tampered"><button id="tamper" style="width:100%;padding:12px;margin:6px 0;border-radius:10px">شبیه‌سازی مبلغ دستکاری‌شده</button></form>
+                <h1 style="color:#e8c877;font-size:20px">Test-Zahlungsseite</h1>
+                <p>Betrag: <b id="amount">{{(tx.Amount / 100m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("de-DE"))}}</b> €</p>
+                <form method="post" action="/dev/fake-gateway/{{t}}/paid"><button id="pay" style="width:100%;padding:12px;margin:6px 0;background:#C9A24A;border:0;border-radius:10px">Zahlung erfolgreich</button></form>
+                <form method="post" action="/dev/fake-gateway/{{t}}/cancelled"><button id="cancel" style="width:100%;padding:12px;margin:6px 0;border-radius:10px">Abbrechen</button></form>
+                <form method="post" action="/dev/fake-gateway/{{t}}/tampered"><button id="tamper" style="width:100%;padding:12px;margin:6px 0;border-radius:10px">Manipulierten Betrag simulieren</button></form>
                 </main></body></html>
                 """;
             return Results.Content(html, "text/html; charset=utf-8");

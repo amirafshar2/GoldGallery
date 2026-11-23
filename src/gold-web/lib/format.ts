@@ -1,11 +1,12 @@
-const fa = new Intl.NumberFormat("fa-IR");
+const de = new Intl.NumberFormat("de-DE");
+const eur = new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-/** Rial → Toman, Persian digits. */
-export const toman = (rial: number | null | undefined) => (rial == null ? "—" : fa.format(Math.round(rial / 10)));
-export const faNum = (n: number | string) => fa.format(Number(n));
-export const grams = (g: number) => new Intl.NumberFormat("fa-IR", { minimumFractionDigits: 2, maximumFractionDigits: 3 }).format(g);
-export const pct = (bp: number) => `${fa.format(bp / 100)}٪`;
-export const faDate = (iso: string) => new Intl.DateTimeFormat("fa-IR-u-ca-persian", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+/** Money is stored as integer cents. Shows "1.234,56" (add "€" next to it in the UI). */
+export const euro = (cents: number | null | undefined) => (cents == null ? "—" : eur.format(cents / 100));
+export const num = (n: number | string) => de.format(Number(n));
+export const grams = (g: number) => new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 3 }).format(g);
+export const pct = (bp: number) => `${de.format(bp / 100)} %`;
+export const date = (iso: string) => new Intl.DateTimeFormat("de-DE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
 
-export const STATUS_FA: Record<string, string> = { AwaitingPayment: "در انتظار پرداخت", Paid: "پرداخت‌شده", Packed: "بسته‌بندی", Shipped: "ارسال‌شده", PickedUp: "تحویل حضوری", Delivered: "تحویل شد", Cancelled: "لغو شد", Refunded: "مرجوع" };
-export const ROLE_FA: Record<string, string> = { Customer: "مشتری", Wholesale: "همکار عمده", Staff: "کارمند", Admin: "مدیر" };
+export const STATUS_LABEL: Record<string, string> = { AwaitingPayment: "Zahlung ausstehend", Paid: "Bezahlt", Packed: "Verpackt", Shipped: "Versendet", PickedUp: "Im Geschäft abgeholt", Delivered: "Zugestellt", Cancelled: "Storniert", Refunded: "Zurückerstattet" };
+export const ROLE_LABEL: Record<string, string> = { Customer: "Kunde", Wholesale: "Großhandelspartner", Staff: "Mitarbeiter", Admin: "Admin" };

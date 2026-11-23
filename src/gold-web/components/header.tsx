@@ -36,7 +36,7 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex min-w-0 items-center gap-3">
           {site.brand.logoUrl && <img src={site.brand.logoUrl} alt="" className="h-9 w-auto" />}
-          <span className="truncate text-xl font-extrabold tracking-tight gold-text">{site.brand.name || "نام فروشگاه"}</span>
+          <span className="truncate text-xl font-extrabold tracking-tight gold-text">{site.brand.name || "Name des Geschäfts"}</span>
         </Link>
         <nav className="hidden items-center gap-7 text-sm md:flex">
           {links.map((l) => <Link key={l.href} href={l.href} className="relative text-muted-foreground transition-colors hover:text-foreground after:absolute after:-bottom-1 after:right-0 after:h-px after:w-0 after:bg-primary after:transition-all hover:after:w-full">{l.label}</Link>)}
@@ -44,12 +44,12 @@ export function Header() {
         <div className="flex items-center gap-2">
           <Link href="/cart" aria-label={t("nav.cart")} className="relative rounded-full p-2 hover:bg-accent">
             <ShoppingBag className="size-5" />
-            {count > 0 && <span className="absolute -top-0.5 -left-0.5 grid size-5 place-items-center rounded-full bg-primary text-[10px] text-primary-foreground num">{count}</span>}
+            {count > 0 && <span className="absolute -top-0.5 -right-0.5 grid size-5 place-items-center rounded-full bg-primary text-[10px] text-primary-foreground num">{count}</span>}
           </Link>
           <Link href={me ? panel : "/login"} className="flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm hover:bg-accent">
             <User className="size-4" /> {me ? (me.role === "Admin" || me.role === "Staff" ? t("nav.admin") : t("nav.account")) : t("nav.login")}
           </Link>
-          <button className="rounded-full p-2 hover:bg-accent md:hidden" onClick={() => setOpen(!open)} aria-label="منو">
+          <button className="rounded-full p-2 hover:bg-accent md:hidden" onClick={() => setOpen(!open)} aria-label="Menü">
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
@@ -59,7 +59,7 @@ export function Header() {
           {links.map((l) => <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 hover:bg-accent">{l.label}</Link>)}
         </nav>
       )}
-      <ScrollProgress className="absolute top-auto bottom-0 h-0.5 origin-right bg-linear-to-l from-primary via-gold-hi to-primary" />
+      <ScrollProgress className="absolute top-auto bottom-0 h-0.5 origin-left bg-linear-to-r from-primary via-gold-hi to-primary" />
     </header>
   );
 }

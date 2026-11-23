@@ -99,13 +99,13 @@ public class PricingEngineTests
             Weight.Zero, Karat.K18, Rate, WageRule.PercentOfRaw(Percentage.Zero), NoRounding));
 
     [Fact]
-    public void BuyBack_NoWage_OneMesghalOf740()
+    public void BuyBack_NoWage_OneTroyOunceOf740()
     {
         var v = PricingEngine.CalculateBuyBack(
-            Weight.FromMesghal(1m), Karat.FromPerMille(740), Money.FromRial(250_000_000));
+            Weight.FromTroyOunces(1m), Karat.FromPerMille(740), Money.FromRial(250_000_000));
 
-        Assert.Equal(4_608, v.Weight.Milligrams);
-        Assert.Equal(1_136_640_000, v.Value.Rial);
+        Assert.Equal(31_103, v.Weight.Milligrams);
+        Assert.Equal(7_672_073_333, v.Value.Rial);
     }
 }
 

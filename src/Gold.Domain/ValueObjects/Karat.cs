@@ -3,12 +3,12 @@ using Gold.Domain.Common;
 namespace Gold.Domain.ValueObjects;
 
 /// <summary>
-/// Gold purity in parts per thousand (عیار). 750 = 18K, 900 = coin (21.6K), 995/999 = bullion.
+/// Gold purity in parts per thousand (Feingehalt). 750 = 18K, 900 = coin (21.6K), 995/999 = bullion.
 /// Old gold may have any purity, so values between 1 and 1000 are allowed.
 /// </summary>
 public readonly record struct Karat
 {
-    /// <summary>The reference purity for Iranian daily rates (price per gram of 18K).</summary>
+    /// <summary>The reference purity for daily gold rates (price per gram of 18K).</summary>
     public const int ReferencePerMille = 750;
 
     public int PerMille { get; }

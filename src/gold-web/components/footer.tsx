@@ -23,9 +23,9 @@ export function Footer() {
           {site.footer.links.map((l) => <Link key={l.url + l.title} href={l.url} className="text-muted-foreground hover:text-velvet-foreground">{l.title}</Link>)}
         </div>
         <div className="space-y-2 text-xs text-muted-foreground">
-          {site.legal.licenseNumber && <p>پروانه‌ی کسب: <span className="num">{site.legal.licenseNumber}</span></p>}
-          {site.legal.economicCode && <p>کد اقتصادی: <span className="num">{site.legal.economicCode}</span></p>}
-          {site.legal.trustSealUrl && <img src={site.legal.trustSealUrl} alt="نماد اعتماد" className="h-16 w-auto" />}
+          {site.legal.licenseNumber && <p>Handelsregister: <span className="num">{site.legal.licenseNumber}</span></p>}
+          {site.legal.economicCode && <p>USt-IdNr.: <span className="num">{site.legal.economicCode}</span></p>}
+          {site.legal.trustSealUrl && <img src={site.legal.trustSealUrl} alt="Gütesiegel" className="h-16 w-auto" />}
         </div>
       </div>
       <div className="border-t px-4 py-4 text-center text-xs text-muted-foreground">

@@ -1,13 +1,13 @@
 "use client";
 
-/** Installment calculator — terms come from admin → «خرید اقساطی» (down %, months, cap, fee). Money stays integer rial. */
+/** Installment calculator — terms come from admin → "Ratenkauf" (down %, months, cap, fee). Money stays integer cents. */
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, CalendarCheck, MessageCircle, Wallet } from "lucide-react";
+import { ArrowRight, CalendarCheck, MessageCircle, Wallet } from "lucide-react";
 import { useSite } from "./site-provider";
 import { BlurFade } from "./ui21/blur-fade";
 import { BorderBeam } from "./ui21/border-beam";
-import { toman, faNum } from "@/lib/format";
+import { euro, num } from "@/lib/format";
 import { waLink } from "@/lib/utils";
 
 export function plan(amountRial: number, downPercent: number, months: number, feePercent: number) {
@@ -21,50 +21,50 @@ export function plan(amountRial: number, downPercent: number, months: number, fe
 export function InstallmentCalculator({ initialRial, compact = false }: { initialRial?: number; compact?: boolean }) {
   const { site } = useSite();
   const t = site.installments;
-  const maxToman = Math.max(10_000_000, Math.round(t.maxRial / 10));
-  const start = Math.min(maxToman, Math.max(10_000_000, Math.round((initialRial ?? 1_000_000_000) / 10)));
-  const [amountToman, setAmount] = useState(start);
-  const p = plan(amountToman * 10, t.downPercent, t.months, t.monthlyFeePercent);
+  const maxEuro = Math.max(500, Math.round(t.maxRial / 100));
+  const start = Math.min(maxEuro, Math.max(500, Math.round((initialRial ?? 250_000) / 100)));
+  const [amountEuro, setAmount] = useState(start);
+  const p = plan(amountEuro * 100, t.downPercent, t.months, t.monthlyFeePercent);
   const wa = site.contact.whatsApp || site.contact.mobile;
-  const msg = `سلام، برای خرید اقساطی طلا به مبلغ ${toman(amountToman * 10)} تومان (پیش‌پرداخت ${toman(p.down)} و ${faNum(t.months)} قسط ${toman(p.monthly)} تومانی) راهنمایی می‌خواهم.`;
+  const msg = `Hallo, ich möchte Gold im Wert von ${euro(amountEuro * 100)} € auf Raten kaufen (Anzahlung ${euro(p.down)} und ${num(t.months)} Raten zu je ${euro(p.monthly)} €) und bitte um Beratung.`;
 
   return (
     <div className="relative overflow-hidden rounded-[calc(var(--radius)*1.25)] border bg-card p-6 shadow-[0_30px_80px_-40px_rgba(60,40,10,.35)] sm:p-10" data-testid="installment-calc">
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="space-y-6">
           <div>
-            <p className="text-sm text-muted-foreground">مبلغ خرید طلا</p>
-            <p className="mt-1 text-4xl font-extrabold text-primary sm:text-5xl"><span className="num">{toman(amountToman * 10)}</span> <span className="text-base font-normal text-muted-foreground">تومان</span></p>
+            <p className="text-sm text-muted-foreground">Kaufbetrag</p>
+            <p className="mt-1 text-4xl font-extrabold text-primary sm:text-5xl"><span className="num">{euro(amountEuro * 100)}</span> <span className="text-base font-normal text-muted-foreground">€</span></p>
           </div>
-          <input type="range" min={10_000_000} max={maxToman} step={5_000_000} value={amountToman}
-            onChange={(e) => setAmount(Number(e.target.value))} aria-label="مبلغ خرید"
+          <input type="range" min={500} max={maxEuro} step={100} value={amountEuro}
+            onChange={(e) => setAmount(Number(e.target.value))} aria-label="Kaufbetrag"
             className="w-full accent-[var(--brand-primary)]" data-testid="installment-range" />
-          <div className="flex justify-between text-xs text-muted-foreground"><span>۱۰ میلیون</span><span>تا سقف {toman(maxToman * 10)} تومان</span></div>
+          <div className="flex justify-between text-xs text-muted-foreground"><span>500 €</span><span>bis {euro(maxEuro * 100)} €</span></div>
           {!compact && t.note && <p className="leading-8 text-muted-foreground">{t.note}</p>}
         </div>
 
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-3">
-            <Stat icon={<Wallet className="size-5" />} label={`پیش‌پرداخت (${faNum(t.downPercent)}٪)`} value={toman(p.down)} />
-            <Stat icon={<CalendarCheck className="size-5" />} label={`هر قسط ماهانه`} value={toman(p.monthly)} />
+            <Stat icon={<Wallet className="size-5" />} label={`Anzahlung (${num(t.downPercent)} %)`} value={euro(p.down)} />
+            <Stat icon={<CalendarCheck className="size-5" />} label={`Monatliche Rate`} value={euro(p.monthly)} />
           </div>
           <div>
-            <p className="mb-3 text-sm text-muted-foreground">برنامه‌ی پرداخت {t.monthlyFeePercent === 0 && <b className="text-emerald-700">— بدون سود</b>}</p>
+            <p className="mb-3 text-sm text-muted-foreground">Zahlungsplan {t.monthlyFeePercent === 0 && <b className="text-emerald-700">– zinsfrei</b>}</p>
             <ol className="flex items-center gap-1">
-              <li className="flex-1"><div className="h-2 rounded-full bg-primary" /><p className="mt-2 text-center text-[11px]">امروز</p></li>
+              <li className="flex-1"><div className="h-2 rounded-full bg-primary" /><p className="mt-2 text-center text-[11px]">heute</p></li>
               {Array.from({ length: t.months }).map((_, i) => (
-                <li key={i} className="flex-1"><div className="h-2 rounded-full bg-primary/30" /><p className="mt-2 text-center text-[11px] text-muted-foreground">ماه {faNum(i + 1)}</p></li>
+                <li key={i} className="flex-1"><div className="h-2 rounded-full bg-primary/30" /><p className="mt-2 text-center text-[11px] text-muted-foreground">Monat {num(i + 1)}</p></li>
               ))}
             </ol>
           </div>
-          <p className="text-sm text-muted-foreground">جمع پرداختی: <b className="num text-foreground">{toman(p.total)}</b> تومان</p>
+          <p className="text-sm text-muted-foreground">Gesamtbetrag: <b className="num text-foreground">{euro(p.total)}</b> €</p>
           <div className="flex flex-wrap gap-3">
             {wa && (
               <a href={waLink(wa, msg)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#1f9d55] px-6 py-3 font-semibold text-white hover:brightness-110">
-                <MessageCircle className="size-5" /> درخواست خرید اقساطی
+                <MessageCircle className="size-5" /> Ratenkauf anfragen
               </a>
             )}
-            {compact && <Link href="/installments" className="inline-flex items-center gap-1 rounded-full border px-5 py-3 text-sm hover:border-primary hover:text-primary">شرایط کامل <ArrowLeft className="size-4" /></Link>}
+            {compact && <Link href="/installments" className="inline-flex items-center gap-1 rounded-full border px-5 py-3 text-sm hover:border-primary hover:text-primary">Alle Bedingungen <ArrowRight className="size-4" /></Link>}
           </div>
         </div>
       </div>
@@ -77,7 +77,7 @@ function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; va
   return (
     <div className="rounded-[var(--radius)] border bg-background/60 p-4">
       <div className="flex items-center gap-2 text-xs text-muted-foreground"><span className="text-primary">{icon}</span>{label}</div>
-      <p className="mt-2 text-xl font-extrabold sm:text-2xl"><span className="num">{value}</span> <span className="text-xs font-normal text-muted-foreground">تومان</span></p>
+      <p className="mt-2 text-xl font-extrabold sm:text-2xl"><span className="num">{value}</span> <span className="text-xs font-normal text-muted-foreground">€</span></p>
     </div>
   );
 }
@@ -88,7 +88,7 @@ export function InstallmentsBlock({ title }: { title: string }) {
   return (
     <section className="mx-auto max-w-7xl px-4">
       <BlurFade inView className="mb-8 sm:mb-10">
-        <p className="eyebrow">طلای اقساطی</p>
+        <p className="eyebrow">Gold auf Raten</p>
         <h2 className="mt-2 text-3xl font-light sm:text-5xl">{title || site.installments.title}</h2>
       </BlurFade>
       <InstallmentCalculator compact />
