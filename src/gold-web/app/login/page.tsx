@@ -20,9 +20,9 @@ function Inner() {
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState("");
-  const [demoRoles, setDemoRoles] = useState<string[]>([]);
+  const [demoRoles, setDemoRoles] = useState<string[] | null>(null);
 
-  useEffect(() => { fetch("/api/v1/auth/demo-roles").then((r) => (r.ok ? r.json() : [])).then(setDemoRoles).catch(() => {}); }, []);
+  useEffect(() => { fetch("/api/v1/auth/demo-roles").then((r) => (r.ok ? r.json() : [])).then((x: string[]) => setDemoRoles(x)).catch(() => setDemoRoles([])); }, []);
   const go = (u: Me) => router.push(next ?? (u.role === "Admin" || u.role === "Staff" ? "/admin" : "/account"));
 
   const send = async () => {
@@ -39,6 +39,7 @@ function Inner() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
+      {demoRoles !== null && demoRoles.length === 0 && (
       <div className="mx-auto max-w-sm space-y-4 rounded-[var(--radius)] border bg-card p-6">
         <h1 className="text-center text-2xl font-extrabold">{t("login.title")}</h1>
         <p className="text-center text-sm text-muted-foreground">{site.brand.name}</p>
@@ -55,13 +56,15 @@ function Inner() {
         {err && <p className="text-sm text-destructive">{err}</p>}
         <Button className="w-full" onClick={sent ? verify : send}>{sent ? t("login.verify") : t("login.send")}</Button>
       </div>
+      )}
 
-      {demoRoles.length > 0 && (
-        <section className="mt-10" data-testid="demo-login">
-          <h2 className="mb-4 text-center text-sm text-muted-foreground">{t("login.demo")}</h2>
+      {demoRoles !== null && demoRoles.length > 0 && (
+        <section data-testid="demo-login">
+          <h1 className="text-center text-2xl font-extrabold">{t("login.title")}</h1>
+          <p className="mx-auto mt-2 mb-6 max-w-md text-center text-sm text-muted-foreground">Demo-Version: Es werden keine persönlichen Daten abgefragt. Wählen Sie eine Rolle und Sie sind sofort angemeldet.</p>
           {/* mobile: stacked full width · tablet: 2×2 · desktop: one row of 4 */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {DEMO_ROLES.filter((r) => demoRoles.includes(r.role)).map((r) => {
+            {DEMO_ROLES.filter((r) => demoRoles?.includes(r.role)).map((r) => {
               const I = ICONS[r.role];
               return (
                 <button key={r.role} data-testid={`demo-${r.role}`} onClick={async () => go(await demoLogin(r.role))}
